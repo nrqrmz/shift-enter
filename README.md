@@ -36,12 +36,22 @@ _(en construcción)_
 
 Si el código es la herramienta con la que se recorre todo lo demás, el código también merece sus propias grandes historias. Cinco presentaciones que dan el todo del cómputo antes que las partes. Aquí la demostración dramática no es el globo negro ni la tira del tiempo: es código que corre.
 
+Cada presentación abre su propia secuencia de notebooks. Los nombres propios que aparecen ahí no son adorno: cada uno es una notebook.
+
 **1. La máquina sin manos** — *el origen del cómputo*
 
 Un interruptor. Prendido, apagado. De ahí sale todo. Cómo se le enseñó a contar a una piedra: electricidad → binario → compuertas → capas de abstracción. La ley de este universo: todo es número, y todo es estado que cambia.
 
 - *Demostración:* construir un sumador con AND/OR/NOT; abrir una imagen, un sonido y un texto y ver que son la misma sustancia.
 - *Abre:* representación, tipos, binario, hardware, abstracción.
+
+*Secuencia:*
+
+- **El interruptor** — prendido y apagado: construir NOT, AND y OR desde cero
+- **Leibniz y el binario** — contar con dos dedos; de 0 y 1 a cualquier número
+- **El sumador** — cómo un montón de compuertas aprende a sumar
+- **Todo es número** — un texto, una imagen y un sonido abiertos por dentro: la misma sustancia
+- **Las capas** — de la compuerta al lenguaje, y por qué ya nadie programa con interruptores
 
 **2. La venida del proceso** — *el algoritmo y la vida*
 
@@ -50,12 +60,30 @@ Una receta que se ejecuta sin su autor presente. De Euclides y al-Juarismi al te
 - *Demostración:* Game of Life de Conway; el MCD de Euclides; un árbol fractal con turtle.
 - *Abre:* secuencia, ciclo, condición, función, recursión, emergencia, simulación.
 
+*Secuencia:*
+
+- **al-Juarismi** — la palabra "algoritmo" viene de un nombre; el MCD de Euclides, vivo desde hace 2,300 años
+- **El telar de Jacquard** — la tarjeta perforada: el primer programa tejía flores
+- **Ada Lovelace** — la Nota G: un programa escrito para una máquina que nunca se construyó
+- **Conway** — Game of Life: cuatro reglas, un universo
+- **La rama que se repite** — recursión y fractales con turtle
+- **3,800 millones de años** — la evolución como algoritmo: mutar, seleccionar, repetir
+
 **3. La venida de quien programa** — *el humano en la máquina*
 
 El tercer regalo montessoriano: mano, mente y corazón. El código no tiene propósito propio: lo pone alguien. Las necesidades humanas fundamentales que resuelve el software. Y el error como práctica humana: depurar. Toda decisión automatizada decide sobre alguien (Therac-25, el Mars Climate Orbiter, un algoritmo que otorga créditos).
 
 - *Demostración:* arreglar un programa roto; escribir uno que resuelva una necesidad real de un compañero.
 - *Abre:* descomposición de problemas, depuración, ética, diseño para usuarios, micro-empresa.
+
+*Secuencia:*
+
+- **La primera polilla** — Grace Hopper y el bug; depurar como oficio, no como castigo
+- **Mano, mente y corazón** — qué necesidad humana resuelve cada programa que usas
+- **Therac-25** — cuando el error mata: una condición de carrera y seis pacientes
+- **El Mars Climate Orbiter** — una sonda perdida por confundir libras con newtons
+- **Un programa para alguien más** — resolver la necesidad real de un compañero y verlo usarlo
+- **El algoritmo que decide** — quién recibe el crédito, quién no, y quién escribió esa regla
 
 **4. La comunicación en código** — *lenguajes y redes*
 
@@ -64,12 +92,30 @@ El espejo directo de "La comunicación en signos": de los interruptores al códi
 - *Demostración:* el mismo programa en tres niveles de lenguaje; llamar a una API pública y ver el mensaje crudo.
 - *Abre:* sintaxis, nombres, web, redes, formatos, control de versiones, colaboración.
 
+*Secuencia:*
+
+- **De la compuerta a Python** — el mismo programa en tres niveles de lenguaje
+- **Grace Hopper y el compilador** — la idea de hablarle a la máquina en nuestro idioma
+- **Nombrar es escribir** — el código se lee mucho más de lo que se ejecuta
+- **El mensaje crudo** — abrir una petición HTTP por dentro: pedir, responder, JSON
+- **Llamar al mundo** — una API pública y datos que no son tuyos
+- **Git** — escribir la historia entre varios sin pisarse
+
 **5. La historia de los datos** — *contar, medir y decidir*
 
 El espejo de "La historia de los números": del hueso de Ishango al censo, a la hoja de cálculo, al dataset. Cómo la humanidad guardó lo que sabe y cómo la máquina aprendió a encontrar patrones ahí: ordenar, buscar, medir, y finalmente modelos que aprenden. Cierra con humildad: lo que una computadora no puede hacer (el programa que nunca termina, lo que los datos no pueden decir).
 
 - *Demostración:* ordenar a mano vs. ordenar con código y cronometrar; un dataset real; un modelito que aprende; un programa que no se detiene.
 - *Abre:* estructuras de datos, archivos, estadística, IA, complejidad, límites.
+
+*Secuencia:*
+
+- **El hueso de Ishango** — veinte mil años de rayitas: la primera base de datos
+- **Del censo a la hoja de cálculo** — guardar lo que sabe un pueblo entero
+- **Ordenar y buscar** — a mano contra la máquina, con cronómetro
+- **Medir el mundo** — un dataset real y las preguntas que sí se pueden responder
+- **La máquina que aprende** — un modelito entrenado desde cero, y qué aprendió de verdad
+- **El programa que nunca termina** — lo que una computadora no puede hacer, y por qué eso es hermoso
 
 _(en construcción)_
 
