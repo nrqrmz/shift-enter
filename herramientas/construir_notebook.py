@@ -147,6 +147,86 @@ El espacio también se convirtió en otro símbolo cuando corriste las letras.
 """)
 
 
+def seccion_foto():
+    md("""
+---
+
+# 2 · Tu foto es una tabla de números
+
+Tu nombre era una lista. Una imagen es una tabla: un número por cada punto de
+la pantalla.
+
+Empieza al revés. En vez de abrir una foto, dibuja una escribiendo. Cada `#` es
+un punto negro y cada `.` uno blanco.
+""")
+    codigo('''
+mi_dibujo = """
+..####..
+.#....#.
+#.#..#.#
+#......#
+#.#..#.#
+#..##..#
+.#....#.
+..####..
+"""
+
+imagen.mostrar(imagen.desde_texto(mi_dibujo), titulo="lo que escribiste")
+''')
+    md("""
+Cámbiale los puntos y los gatos. Dibuja lo tuyo y vuelve a correr la celda.
+
+Los números no representan el dibujo. Los números **son** el dibujo.
+""")
+    md("""
+### 🔧 Ahora la tuya
+
+Sube una foto tuya. Si no quieres, no subas nada: el taller trae una de
+repuesto y todo lo de abajo funciona igual.
+""")
+    codigo('''
+imagen.selector()
+''')
+    md("""
+Aquí está por dentro. **Pasa el mouse por encima** y vas a ver el número de cada
+pixel. Acércate con dos dedos hasta que los puntos se vuelvan cuadrados.
+""")
+    codigo('''
+imagen.mostrar_con_numeros(imagen.actual(), titulo="pasa el mouse por encima")
+''')
+    md("""
+Si una foto es una tabla de números, entonces **editar una foto es hacer
+aritmética**. Nada más.
+
+Arrastra y mírala aclararse. Le estás sumando el mismo número a cada pixel.
+""")
+    codigo('''
+imagen.deslizador_brillo(imagen.actual())
+''')
+    md("""
+### Y ahora al revés
+
+Sumarle a cada pixel lo aclara. Restarle lo oscurece.
+
+¿Y si le restas cada pixel a 255? El negro se vuelve blanco, el blanco se vuelve
+negro, y la foto se da la vuelta entera. Una resta.
+""")
+    codigo('''
+imagen.mostrar(255 - imagen.actual(), titulo="la misma foto, al revés")
+''')
+    md("""
+### El color son tres números
+
+Hasta aquí todo fue gris, que es un número por punto. El color son tres:
+cuánto rojo, cuánto verde y cuánto azul.
+
+Con esos tres cabe cualquier color que hayas visto en una pantalla. Búscate uno.
+""")
+    codigo('''
+imagen.mezclador_color()
+''')
+
+
 def construir(ruta="la-piedra-que-aprendio-a-contar.ipynb"):
     cuaderno = nbf.v4.new_notebook(cells=CELDAS)
     cuaderno.metadata.update({
@@ -166,4 +246,5 @@ def construir(ruta="la-piedra-que-aprendio-a-contar.ipynb"):
 if __name__ == "__main__":
     portada()
     seccion_nombre()
+    seccion_foto()
     construir()
