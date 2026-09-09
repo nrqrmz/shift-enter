@@ -1,5 +1,3 @@
-import matplotlib
-matplotlib.use("Agg")
 import numpy as np
 
 from shift_enter import imagen

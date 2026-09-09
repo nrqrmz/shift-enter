@@ -1,6 +1,3 @@
-import matplotlib
-matplotlib.use("Agg")
-
 from shift_enter import cifra
 
 

@@ -1,6 +1,3 @@
-import matplotlib
-matplotlib.use("Agg")
-
 from shift_enter import interruptores
 from shift_enter.binario import TABLA_DE_VALORES
 

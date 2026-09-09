@@ -90,8 +90,7 @@ def _tabla_de_verdad(nombre, compuerta, entradas=2):
 
 def tabla_de_verdad(nombre, compuerta, entradas=2):
     """Todo lo que puede pasar con una compuerta, dibujado."""
-    figura = _tabla_de_verdad(nombre, compuerta, entradas)
-    plt.show()
+    _tabla_de_verdad(nombre, compuerta, entradas).show()
 
 
 def dibujar_palabra(texto):
