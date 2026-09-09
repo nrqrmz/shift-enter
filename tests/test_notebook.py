@@ -62,6 +62,7 @@ def test_toda_funcion_de_concepto_que_ya_existe_vive_en_celda_visible(celdas):
     assert ofensivas == []
 
 
-# No hay aquí una prueba de que las ocho firmas de CONCEPTO estén completas:
-# la Tarea 14 escribe esas ocho funciones a mano y agrega esa prueba junto
-# con ellas.
+def test_el_alumno_escribe_el_concepto_a_mano(celdas):
+    fuente_visible = "\n".join("".join(celda["source"]) for _, celda in visibles(celdas))
+    ausentes = [firma for firma in CONCEPTO if firma not in fuente_visible]
+    assert ausentes == []

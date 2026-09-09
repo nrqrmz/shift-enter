@@ -384,6 +384,196 @@ interruptores, contando el cero?
 """)
 
 
+def seccion_sumador():
+    md("""
+---
+
+# 5 · ¿Y quién suma allá abajo? Nadie
+
+Todo lo que hiciste hoy fue sumar. Le sumaste 3 a cada letra. Le sumaste 70 a
+cada pixel. Sumaste tres ondas y salió un acorde.
+
+Y allá abajo, adentro de la piedra, no hay nadie que sepa sumar. Solo hay
+interruptores.
+
+Vamos a construir al que suma.
+""")
+    md("""
+### Tres reglas
+
+Un interruptor solo no sirve. Lo interesante empieza cuando conectas dos y
+decides qué pasa con el de salida.
+
+Hay tres formas de conectarlos que resultaron suficientes para construir el
+mundo entero. Se llaman **compuertas**. Son tres `if`, y las escribes tú.
+""")
+    codigo('''
+def NO(a):
+    if a == apagado:
+        return prendido
+    else:
+        return apagado
+
+def Y(a, b):
+    if a == prendido and b == prendido:
+        return prendido
+    else:
+        return apagado
+
+def O(a, b):
+    if a == apagado and b == apagado:
+        return apagado
+    else:
+        return prendido
+
+
+interruptores.tabla_de_verdad("NO", NO, entradas=1)
+interruptores.tabla_de_verdad("Y", Y)
+interruptores.tabla_de_verdad("O", O)
+''')
+    md("""
+Esas tablas son la definición completa de una compuerta. Ahí está *todo* lo que
+puede pasar. No hay caso escondido.
+
+Con esas tres se puede construir cualquier otra cosa que haga una computadora.
+Cualquiera. Empecemos por una cuarta que se prende cuando los dos interruptores
+son **distintos**.
+""")
+    codigo('''
+def XOR(a, b):
+    """Prendido solo si a y b son DISTINTOS.
+    No es una pieza nueva: es NO, Y y O acomodadas de cierta forma."""
+    return O( Y(a, NO(b)),
+              Y(NO(a), b) )
+
+
+interruptores.tabla_de_verdad("XOR", XOR)
+''')
+    md("""
+### Las cuatro sumas que existen
+
+Sumar un interruptor más un interruptor. Eso es todo lo que hay:
+
+```
+0 + 0 = 0
+0 + 1 = 1
+1 + 0 = 1
+1 + 1 = 10     ← se pasa: escribe 0 y lleva 1
+```
+
+Mira la columna de la suma y la columna del llevo.
+""")
+    codigo('''
+print("     a    b          suma   llevo")
+print("   " + "─" * 32)
+for a in (apagado, prendido):
+    for b in (apagado, prendido):
+        print(f"     {simbolo(a)}   {simbolo(b)}     →      {simbolo(XOR(a, b))}     {simbolo(Y(a, b))}")
+''')
+    md("""
+La columna de la suma es **XOR**. La columna del llevo es **Y**.
+
+Las dos piezas ya estaban en tu caja. Nadie las inventó para esto.
+""")
+    codigo('''
+def medio_sumador(a, b):
+    suma    = XOR(a, b)
+    acarreo = Y(a, b)
+    return suma, acarreo
+
+
+def sumador_completo(a, b, llevo_que_entra):
+    suma_parcial, acarreo_1 = medio_sumador(a, b)
+    suma_final,   acarreo_2 = medio_sumador(suma_parcial, llevo_que_entra)
+    return suma_final, O(acarreo_1, acarreo_2)
+''')
+    md("""
+### Encadenarlos
+
+Cuando sumas 47 + 38 a mano empiezas por la derecha, y lo que llevas cae en la
+siguiente columna. Aquí pasa igual: cada columna recibe tres cosas, el bit de
+arriba, el de abajo, y lo que le llegó de la columna anterior.
+
+Ocho sumadores completos en fila, cada uno pasándole su llevo al siguiente. Eso
+es, literalmente, una pieza que existe dentro de tu procesador.
+""")
+    codigo('''
+def sumar(a, b, ancho=8):
+    bits_a = a_binario(a, ancho)
+    bits_b = a_binario(b, ancho)
+    resultado = []
+    llevo = apagado
+
+    for i in reversed(range(ancho)):
+        suma, llevo = sumador_completo(bits_a[i], bits_b[i], llevo)
+        resultado.insert(0, suma)
+
+    return resultado
+
+
+interruptores.dibujar(sumar(13, 29), etiquetas=TABLA_DE_VALORES,
+                      mostrar_bool=False, titulo="13 + 29")
+''')
+    codigo('''
+print("Esos interruptores, leidos como numero:", a_decimal(sumar(13, 29)))
+print()
+print("Ese 42 salio de:")
+print("   • ocho sumadores completos encadenados,")
+print("   • cada uno hecho de dos medios sumadores y una compuerta O,")
+print("   • cada medio sumador hecho de un XOR y un Y,")
+print("   • el XOR hecho de NO, Y y O,")
+print("   • y NO, Y y O son tres if.")
+print()
+print("En ningun punto de esa cadena aparece el signo +.")
+print("Acabas de construir la parte de la computadora que suma. 🎯")
+''')
+    md("""
+### ✅ Que se califique solo
+
+Un sumador que acierta una vez pudo tener suerte. Que lo pruebe con **todas** las
+sumas posibles de 0 a 127, y que se compare contra el `+` de Python.
+""")
+    codigo('''
+aciertos = 0
+for a in range(128):
+    for b in range(128):
+        if a_decimal(sumar(a, b)) == a + b:
+            aciertos = aciertos + 1
+
+print(f"✅ {aciertos:,} de 16,384 sumas correctas")
+''')
+    md("""
+### 🔧 Adivina antes de correr
+
+Con ocho interruptores no cabe nada mayor que 255.
+
+¿Qué crees que va a pasar con `sumar(255, 1)`? Adivina, y luego corre la celda.
+""")
+    codigo('''
+interruptores.dibujar(sumar(255, 1), etiquetas=TABLA_DE_VALORES,
+                      mostrar_bool=False, titulo="255 + 1")
+''')
+    md("""
+Todos apagados. Cero.
+
+Eso se llama **desbordamiento**, y no es un detalle académico:
+
+- En **Pac-Man**, el contador de niveles usaba ocho interruptores. Al llegar al
+  nivel 256 se desbordó y media pantalla se convirtió en basura. Nadie pudo pasar
+  de ahí durante años.
+- En 1996 el cohete **Ariane 5** se autodestruyó 37 segundos después de despegar.
+  Un número no cupo donde lo estaban metiendo. Costó 370 millones de dólares.
+
+Tu sumador tiene exactamente el mismo límite que ellos. No porque esté mal hecho:
+porque los interruptores se acaban.
+
+### 🤔 Para pensar
+
+Si un interruptor solo puede estar prendido o apagado, no hay dónde poner el
+signo menos. ¿Cómo guardarías un número **negativo**?
+""")
+
+
 def construir(ruta="la-piedra-que-aprendio-a-contar.ipynb"):
     cuaderno = nbf.v4.new_notebook(cells=CELDAS)
     cuaderno.metadata.update({
@@ -406,4 +596,5 @@ if __name__ == "__main__":
     seccion_foto()
     seccion_musica()
     seccion_piedra()
+    seccion_sumador()
     construir()
