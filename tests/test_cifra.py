@@ -1,8 +1,6 @@
 import matplotlib
 matplotlib.use("Agg")
 
-import pytest
-
 from shift_enter import cifra
 
 
@@ -29,11 +27,14 @@ def test_el_disco_dibuja_las_dos_tiras_y_el_mensaje():
     assert "A" in textos
 
 
-@pytest.mark.filterwarnings("ignore::DeprecationWarning")
 def test_deslizador_disco_deja_un_cuadro_fijo_antes_del_widget(monkeypatch):
     llamadas = []
     monkeypatch.setattr(cifra, "disco", lambda *a, **k: llamadas.append((a, k)))
     cifra.deslizador_disco("QF%UNJIWF")
+    # Dos llamadas: el cuadro fijo explicito y el render inicial de @interact
+    # (que tambien dibuja con desplazamiento 0, el valor por defecto del
+    # deslizador). Si se borra la linea del cuadro fijo, solo queda una.
+    assert len(llamadas) == 2
     primera_args, primera_kwargs = llamadas[0]
     assert primera_args[:2] == ("QF%UNJIWF", 0) or (
         primera_args[:1] == ("QF%UNJIWF",) and primera_kwargs.get("desplazamiento") == 0

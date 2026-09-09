@@ -1,7 +1,6 @@
 import matplotlib
 matplotlib.use("Agg")
 import numpy as np
-import pytest
 
 from shift_enter import sonido
 
@@ -42,7 +41,6 @@ def test_dibujar_onda_pinta_una_linea_por_onda():
     assert len(eje.lines) == 2
 
 
-@pytest.mark.filterwarnings("ignore::DeprecationWarning")
 def test_deslizador_de_tono_deja_un_cuadro_fijo_antes_del_widget(monkeypatch):
     llamadas = []
     monkeypatch.setattr(sonido, "dibujar_onda", lambda *a, **k: llamadas.append((a, k)))

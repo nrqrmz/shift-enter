@@ -49,8 +49,7 @@ def dibujar(bits, etiquetas=None, titulo=None, mostrar_bool=True, ax=None):
         ax.set_title(titulo, fontsize=13, pad=10)
     if propia:
         plt.tight_layout()
-        if plt.get_backend().lower() != 'agg':
-            plt.show()
+        plt.show()
     return ax
 
 
@@ -86,8 +85,7 @@ def tabla_de_verdad(nombre, compuerta, entradas=2):
     ax.set_aspect("equal")
     ax.axis("off")
     plt.tight_layout()
-    if plt.get_backend().lower() != 'agg':
-        plt.show()
+    plt.show()
     return figura
 
 

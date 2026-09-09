@@ -39,8 +39,7 @@ def disco(mensaje, desplazamiento, ax=None):
     ax.axis("off")
     if propia:
         plt.tight_layout()
-        if plt.get_backend().lower() != 'agg':
-            plt.show()
+        plt.show()
     return ax
 
 

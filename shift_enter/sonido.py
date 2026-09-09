@@ -56,8 +56,7 @@ def dibujar_onda(ondas, etiquetas=None, muestras=300, ax=None):
     ax.set_xlabel("segundos")
     if propia:
         plt.tight_layout()
-        if plt.get_backend().lower() != 'agg':
-            plt.show()
+        plt.show()
     return ax
 
 
