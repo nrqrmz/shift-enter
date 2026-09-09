@@ -8,6 +8,7 @@ __pycache__/
 .venv/
 venv/
 env/
+shift_enter.egg-info/
 
 # Agentes
 CLAUDE.md
@@ -29,3 +30,6 @@ CLAUDE.md
 ._*
 Thumbs.db
 desktop.ini
+
+# Superpowers (andamio de agentes)
+.superpowers/
