@@ -574,6 +574,81 @@ signo menos. ¿Cómo guardarías un número **negativo**?
 """)
 
 
+def seccion_torre():
+    md("""
+---
+
+# 6 · Las capas
+
+Tú escribiste `sumar` con compuertas. Python trae un `+` que ya venía hecho.
+
+Hacen lo mismo. ¿Para qué existen los dos? Corre esto.
+""")
+    codigo('''
+inicio = time.perf_counter()
+for _ in range(300):
+    sumar(13, 29)
+tuyo = (time.perf_counter() - inicio) / 300
+
+inicio = time.perf_counter()
+for _ in range(300000):
+    13 + 29
+de_python = (time.perf_counter() - inicio) / 300000
+
+print(f"   tu sumador:      {tuyo * 1e6:>10.1f} microsegundos")
+print(f"   el + de Python:  {de_python * 1e6:>10.4f} microsegundos")
+print()
+print(f"   El tuyo es unas {tuyo / de_python:,.0f} veces mas lento.")
+''')
+    md("""
+### Por qué
+
+Tu sumador **simula** compuertas usando software, que a su vez corre sobre
+compuertas de verdad grabadas en silicio, que hacen la misma operación miles de
+millones de veces por segundo.
+
+Construiste una computadora dentro de una computadora. Por eso es lenta, y por
+eso valió la pena: pudiste verla por dentro.
+
+El `+` de Python no es más listo que el tuyo. Solo está más abajo en la torre.
+""")
+    codigo('''
+torre.dibujar()
+''')
+    md("""
+### Lo que se aprende bajando
+
+Cada capa de esa torre existe por una sola razón: **para que no tengas que pensar
+en la de abajo**.
+
+El que escribe un videojuego no piensa en transistores. El que diseña
+transistores no piensa en videojuegos. Y así funciona todo, hasta el día que algo
+se rompe y alguien tiene que saber bajar.
+
+Hoy bajaste hasta el fondo. Abriste tu nombre, tu cara y tu música, tocaste el
+interruptor, lo conectaste, le enseñaste a contar, le enseñaste a sumar, y
+volviste a subir.
+
+La piedra ya cuenta.
+""")
+    md("""
+---
+
+## 🤔 Y sin embargo
+
+Tu sumador no ha hecho nada por su cuenta.
+
+Se quedó ahí, quieto, esperando a que tú corrieras la celda. Sabe sumar, pero no
+sabe **cuándo** sumar, ni **qué** sumar, ni qué hacer después.
+
+Le falta algo que no es una compuerta ni un número:
+
+> Una receta. Alguien que le diga qué hacer, y en qué orden.
+
+Eso es la siguiente presentación: **la venida del proceso**.
+""")
+
+
 def construir(ruta="la-piedra-que-aprendio-a-contar.ipynb"):
     cuaderno = nbf.v4.new_notebook(cells=CELDAS)
     cuaderno.metadata.update({
@@ -597,4 +672,5 @@ if __name__ == "__main__":
     seccion_musica()
     seccion_piedra()
     seccion_sumador()
+    seccion_torre()
     construir()
