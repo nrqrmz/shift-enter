@@ -149,3 +149,100 @@ def probador():
     """Prende los dos interruptores y mira las tres compuertas a la vez."""
     a, b, salida = _probador()
     display(widgets.VBox([widgets.HBox([a, b]), salida]))
+
+
+def _cable(ax, puntos, vivo):
+    """Un cable. Encendido si esta conduciendo, apagado si no."""
+    xs = [p[0] for p in puntos]
+    ys = [p[1] for p in puntos]
+    ax.plot(xs, ys, linewidth=2.6 if vivo else 1.6,
+            color=ENCENDIDO if vivo else BORDE, zorder=1,
+            solid_capstyle="round")
+
+
+def _caja(ax, x, y, texto, vivo):
+    """Una compuerta, dibujada como caja rotulada."""
+    ax.add_patch(plt.Rectangle((x - 0.62, y - 0.42), 1.24, 0.84, zorder=2,
+                               linewidth=1.8, facecolor="white",
+                               edgecolor=ENCENDIDO if vivo else BORDE))
+    ax.text(x, y, texto, ha="center", va="center", zorder=3,
+            fontsize=11, weight="bold", family="monospace")
+
+
+def _foco(ax, x, y, valor, etiqueta):
+    """Un interruptor con su rotulo y su cero o su uno."""
+    ax.add_patch(plt.Circle((x, y), 0.3, zorder=3, linewidth=1.6,
+                            facecolor=ENCENDIDO if valor else APAGADO,
+                            edgecolor=BORDE))
+    ax.text(x, y + 0.55, etiqueta, ha="center", va="center",
+            fontsize=11, color=TENUE)
+    ax.text(x, y - 0.62, str(int(bool(valor))), ha="center", va="center",
+            fontsize=12, weight="bold", family="monospace")
+
+
+def _dibujar_xor(a, b, ax=None):
+    """El cableado del XOR, con la corriente encendida por donde pasa."""
+    a, b = bool(a), bool(b)
+    no_a, no_b = NOT(a), NOT(b)
+    arriba = AND(a, no_b)
+    abajo = AND(no_a, b)
+    salida = OR(arriba, abajo)
+
+    propia = ax is None
+    if propia:
+        _, ax = plt.subplots(figsize=(10, 4.6))
+
+    _foco(ax, 0, 3.2, a, "a")
+    _foco(ax, 0, 0.4, b, "b")
+
+    _caja(ax, 2.2, 1.0, "NOT", no_b)
+    _caja(ax, 2.2, 2.6, "NOT", no_a)
+    _caja(ax, 4.6, 3.2, "AND", arriba)
+    _caja(ax, 4.6, 0.4, "AND", abajo)
+    _caja(ax, 7.0, 1.8, "OR", salida)
+
+    _cable(ax, [(0.3, 3.2), (3.98, 3.2)], a)
+    _cable(ax, [(0.3, 0.4), (1.2, 0.4), (1.2, 1.0), (1.58, 1.0)], b)
+    _cable(ax, [(2.82, 1.0), (3.4, 1.0), (3.4, 2.95), (3.98, 2.95)], no_b)
+    _cable(ax, [(0.3, 3.2), (1.2, 3.2), (1.2, 2.6), (1.58, 2.6)], a)
+    _cable(ax, [(2.82, 2.6), (3.4, 2.6), (3.4, 0.65), (3.98, 0.65)], no_a)
+    _cable(ax, [(0.3, 0.4), (3.98, 0.4)], b)
+    _cable(ax, [(5.22, 3.2), (5.9, 3.2), (5.9, 2.0), (6.38, 2.0)], arriba)
+    _cable(ax, [(5.22, 0.4), (5.9, 0.4), (5.9, 1.6), (6.38, 1.6)], abajo)
+    _cable(ax, [(7.62, 1.8), (8.6, 1.8)], salida)
+
+    _foco(ax, 8.9, 1.8, salida, "XOR")
+
+    ax.set_xlim(-0.9, 9.9)
+    ax.set_ylim(-0.9, 4.2)
+    ax.set_aspect("equal")
+    ax.axis("off")
+    if propia:
+        plt.tight_layout()
+    return ax
+
+
+def _diagrama_xor():
+    """Construye el diagrama vivo del XOR. Version interna."""
+    a = widgets.ToggleButton(value=False, description="a",
+                             layout=widgets.Layout(width="70px"))
+    b = widgets.ToggleButton(value=False, description="b",
+                             layout=widgets.Layout(width="70px"))
+    salida = widgets.Output()
+
+    def pintar(_=None):
+        with salida:
+            salida.clear_output(wait=True)
+            _dibujar_xor(a.value, b.value)
+            plt.show()
+
+    a.observe(pintar, names="value")
+    b.observe(pintar, names="value")
+    pintar()
+    return a, b, salida
+
+
+def diagrama_xor():
+    """Mueve los interruptores y mira por donde pasa la corriente."""
+    a, b, salida = _diagrama_xor()
+    display(widgets.VBox([widgets.HBox([a, b]), salida]))

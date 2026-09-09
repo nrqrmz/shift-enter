@@ -1,5 +1,8 @@
+import matplotlib.pyplot as plt
+
 from shift_enter import compuertas
 from shift_enter.binario import a_decimal
+from shift_enter.paleta import ENCENDIDO
 
 
 def test_not_invierte():
@@ -120,3 +123,56 @@ def test_el_probador_repinta_cuando_prendes_uno(monkeypatch):
 
 def test_probador_no_devuelve_nada():
     assert compuertas.probador() is None
+
+
+def _cables_encendidos(eje):
+    return [linea for linea in eje.lines
+            if linea.get_color() == ENCENDIDO]
+
+
+def test_con_todo_apagado_solo_conducen_los_cables_de_las_dos_NOT():
+    # Una NOT alimentada con cero saca uno: sus dos cables son los unicos vivos.
+    # Eso no es un defecto del dibujo, es justo lo que la seccion ensena.
+    eje = compuertas._dibujar_xor(False, False)
+    assert len(_cables_encendidos(eje)) == 2
+    plt.close("all")
+
+
+def test_el_cable_de_salida_se_apaga_cuando_las_entradas_son_iguales():
+    for valor in (False, True):
+        eje = compuertas._dibujar_xor(valor, valor)
+        assert eje.lines[-1].get_color() != ENCENDIDO
+        plt.close("all")
+
+
+def test_el_cable_de_salida_conduce_cuando_las_entradas_son_distintas():
+    for a, b in ((True, False), (False, True)):
+        eje = compuertas._dibujar_xor(a, b)
+        assert eje.lines[-1].get_color() == ENCENDIDO
+        plt.close("all")
+
+
+def test_el_diagrama_rotula_la_salida_con_el_valor_del_xor():
+    for a in (False, True):
+        for b in (False, True):
+            eje = compuertas._dibujar_xor(a, b)
+            textos = [t.get_text() for t in eje.texts]
+            assert "XOR" in textos
+            assert str(int(compuertas.XOR(a, b))) in textos
+    plt.close("all")
+
+
+def test_el_diagrama_xor_repinta_cuando_prendes_uno(monkeypatch):
+    pintados = []
+    monkeypatch.setattr(compuertas, "_dibujar_xor",
+                        lambda *a, **k: pintados.append(a))
+    a, b, salida = compuertas._diagrama_xor()
+    de_arranque = len(pintados)
+    b.value = True
+    assert len(pintados) == de_arranque + 1
+    assert pintados[-1] == (False, True)
+    plt.close("all")
+
+
+def test_diagrama_xor_no_devuelve_nada():
+    assert compuertas.diagrama_xor() is None
