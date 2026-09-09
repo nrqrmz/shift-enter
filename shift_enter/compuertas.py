@@ -52,17 +52,28 @@ def sumador_completo(a, b, llevo_que_entra):
     return suma_final, OR(acarreo_1, acarreo_2)
 
 
-def sumar(a, b, ancho=8):
-    """Ocho sumadores completos en fila. Devuelve la lista de bits."""
-    bits_a = a_binario(a, ancho)
-    bits_b = a_binario(b, ancho)
-    resultado = []
+def _llevos(bits_a, bits_b):
+    """Suma columna por columna y guarda el llevo que sale de cada una.
+
+    Es el unico lugar donde vive la cadena de acarreo: `sumar` la usa y tira
+    los llevos, el dibujo la usa y los pinta.
+    """
+    ancho = len(bits_a)
+    resultado = [False] * ancho
+    llevos = [False] * ancho
     llevo = APAGADO_LOGICO
 
     for i in reversed(range(ancho)):
         suma, llevo = sumador_completo(bits_a[i], bits_b[i], llevo)
-        resultado.insert(0, suma)
+        resultado[i] = suma
+        llevos[i] = llevo
 
+    return resultado, llevos
+
+
+def sumar(a, b, ancho=8):
+    """Ocho sumadores completos en fila. Devuelve la lista de bits."""
+    resultado, _ = _llevos(a_binario(a, ancho), a_binario(b, ancho))
     return resultado
 
 
@@ -306,20 +317,6 @@ def medio_sumador_vivo():
     """Las cuatro sumas que existen, una por una, con el dedo."""
     a, b, salida = _medio_sumador_vivo()
     display(widgets.VBox([widgets.HBox([a, b]), salida]))
-
-
-def _llevos(bits_a, bits_b):
-    """Suma columna por columna y guarda el llevo que sale de cada una."""
-    resultado = [False] * 8
-    llevos = [False] * 8
-    llevo = APAGADO_LOGICO
-
-    for i in reversed(range(8)):
-        suma, llevo = sumador_completo(bits_a[i], bits_b[i], llevo)
-        resultado[i] = suma
-        llevos[i] = llevo
-
-    return resultado, llevos
 
 
 def _dibujar_sumador(bits_a, bits_b, ax=None):
