@@ -46,6 +46,24 @@ def test_el_contador_trae_un_solo_boton_de_play():
     assert play.value is False
 
 
+def test_el_boton_dice_pausa_mientras_corre():
+    play, deslizador, salida = interruptores._contador(ms=20)
+    play.value = True
+    try:
+        assert play.description == "pausa"
+    finally:
+        play.value = False
+    assert play.description == "play"
+
+    for _ in range(100):
+        vivos = [hilo for hilo in threading.enumerate()
+                 if hilo.name == interruptores.HILO_DEL_CONTADOR and hilo.is_alive()]
+        if not vivos:
+            break
+        time.sleep(0.02)
+    assert vivos == []
+
+
 def test_el_contador_da_la_vuelta_al_llegar_al_tope():
     assert interruptores._siguiente(254, 0, 255) == 255
     assert interruptores._siguiente(255, 0, 255) == 0
@@ -81,18 +99,6 @@ def test_solo_un_hilo_avanza_mientras_el_play_esta_prendido():
         assert len(vivos) == 1
     finally:
         play.value = False
-
-
-def test_el_boton_dice_pausa_mientras_corre():
-    # Va despues de las pruebas que cuentan hilos por nombre: su hilo tarda
-    # todo ms=5000 en notar que el play se apago, y no debe contaminarlas.
-    play, deslizador, salida = interruptores._contador(ms=5000)
-    play.value = True
-    try:
-        assert play.description == "pausa"
-    finally:
-        play.value = False
-    assert play.description == "play"
 
 
 def test_tablero_devuelve_none():
