@@ -3,15 +3,15 @@
 import matplotlib.pyplot as plt
 
 LAS_CAPAS = [
-    ("Arena y electricidad", "fisica. Aqui no hay ideas todavia"),
-    ("Transistor", "un interruptor sin partes moviles"),
+    ("Arena y electricidad", "física. Aquí no hay ideas todavía"),
+    ("Transistor", "un interruptor sin partes móviles"),
     ("Compuerta", "NO, Y, O            ← lo construiste en §5"),
     ("Bit", "prendido o apagado  ← §4"),
-    ("Byte", "ocho bits: un numero, una letra, un pixel  ← §1, §2 y §4"),
+    ("Byte", "ocho bits: un número, una letra, un pixel  ← §1, §2 y §4"),
     ("Sumador", "13 + 29 = 42        ← §5"),
-    ("Instruccion", "lo unico que el procesador entiende"),
+    ("Instrucción", "lo único que el procesador entiende"),
     ("Python", "el + que usaste sin pensarlo"),
-    ("Esta celda", "aqui estas tu"),
+    ("Esta celda", "aquí estás tú"),
 ]
 
 

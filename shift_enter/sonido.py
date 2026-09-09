@@ -69,5 +69,5 @@ def deslizador_de_tono():
     @interact(hz=widgets.IntSlider(min=110, max=1760, step=10, value=440,
                                    description="Hz"))
     def _(hz):
-        print(f"   Cambiaste un solo numero: {hz}")
+        print(f"   Cambiaste un solo número: {hz}")
         reproducir(onda(hz))

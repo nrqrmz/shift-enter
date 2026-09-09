@@ -53,8 +53,8 @@ def dibujar(bits, etiquetas=None, titulo=None, mostrar_bool=True, ax=None):
     return ax
 
 
-def tabla_de_verdad(nombre, compuerta, entradas=2):
-    """Todo lo que puede pasar con una compuerta, dibujado."""
+def _tabla_de_verdad(nombre, compuerta, entradas=2):
+    """Construye la figura con todo lo que puede pasar con una compuerta. Version interna."""
     if entradas == 1:
         casos = [(a,) for a in (False, True)]
         encabezados = ["a"]
@@ -85,8 +85,13 @@ def tabla_de_verdad(nombre, compuerta, entradas=2):
     ax.set_aspect("equal")
     ax.axis("off")
     plt.tight_layout()
-    plt.show()
     return figura
+
+
+def tabla_de_verdad(nombre, compuerta, entradas=2):
+    """Todo lo que puede pasar con una compuerta, dibujado."""
+    figura = _tabla_de_verdad(nombre, compuerta, entradas)
+    plt.show()
 
 
 def dibujar_palabra(texto):
@@ -124,7 +129,7 @@ def _marcador(bits):
     partes = " + ".join(str(v) for b, v in zip(bits, TABLA_DE_VALORES) if b)
     return (f"{como_html(bits, TABLA_DE_VALORES)}"
             f"<div style='font-size:40px;font-weight:bold;margin-top:8px'>{numero}</div>"
-            f"<div style='color:#777'>{partes or 'ningun interruptor prendido'}</div>")
+            f"<div style='color:#777'>{partes or 'ningún interruptor prendido'}</div>")
 
 
 def _tablero(valor_inicial=0):
@@ -156,7 +161,7 @@ def tablero(valor_inicial=0):
 def _contador(desde=0, hasta=255, ms=200):
     """Construye el boton de play contando en binario. Version interna."""
     reproductor = widgets.Play(value=desde, min=desde, max=hasta, interval=ms)
-    deslizador = widgets.IntSlider(value=desde, min=desde, max=hasta, description="numero")
+    deslizador = widgets.IntSlider(value=desde, min=desde, max=hasta, description="número")
     widgets.link((reproductor, "value"), (deslizador, "value"))
     salida = widgets.HTML()
 
