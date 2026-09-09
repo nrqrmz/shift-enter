@@ -53,47 +53,6 @@ def dibujar(bits, etiquetas=None, titulo=None, mostrar_bool=True, ax=None):
     return ax
 
 
-def _tabla_de_verdad(nombre, compuerta, entradas=2):
-    """Construye la figura con todo lo que puede pasar con una compuerta. Version interna."""
-    if entradas == 1:
-        casos = [(a,) for a in (False, True)]
-        encabezados = ["a"]
-    else:
-        casos = [(a, b) for a in (False, True) for b in (False, True)]
-        encabezados = ["a", "b"]
-
-    salida_x = len(encabezados) * 0.85 + 0.75
-    figura, ax = plt.subplots(figsize=(salida_x + 1.3, 0.85 * len(casos) + 1.2))
-
-    for j, h in enumerate(encabezados):
-        ax.text(j * 0.85, 0.85, h, ha="center", fontsize=12, color="0.35")
-    ax.text(salida_x, 0.85, nombre, ha="center", fontsize=12, weight="bold")
-
-    for fila, caso in enumerate(casos):
-        y = -fila
-        for j, v in enumerate(caso):
-            ax.add_patch(plt.Circle((j * 0.85, y), 0.28, zorder=2, linewidth=1.4,
-                                    facecolor=ENCENDIDO if v else APAGADO, edgecolor=BORDE))
-        ax.text(salida_x - 0.75, y, "→", ha="center", va="center",
-                fontsize=15, color=TENUE)
-        s = compuerta(*caso)
-        ax.add_patch(plt.Circle((salida_x, y), 0.28, zorder=2, linewidth=1.4,
-                                facecolor=ENCENDIDO if s else APAGADO, edgecolor=BORDE))
-
-    ax.set_xlim(-0.55, salida_x + 0.55)
-    ax.set_ylim(-len(casos) + 0.1, 1.25)
-    ax.set_aspect("equal")
-    ax.axis("off")
-    plt.tight_layout()
-    return figura
-
-
-def tabla_de_verdad(nombre, compuerta, entradas=2):
-    """Todo lo que puede pasar con una compuerta, dibujado."""
-    _tabla_de_verdad(nombre, compuerta, entradas)
-    plt.show()
-
-
 def dibujar_palabra(texto):
     """Cada letra de un texto, en ocho interruptores."""
     for letra in texto:

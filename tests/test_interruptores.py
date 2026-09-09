@@ -18,16 +18,6 @@ def test_dibujar_pinta_un_circulo_por_bit():
     assert len(eje.patches) == 3
 
 
-def test_tabla_de_verdad_de_una_entrada_tiene_dos_casos():
-    figura = interruptores._tabla_de_verdad("NO", lambda a: not a, entradas=1)
-    ejes = figura.axes[0]
-    assert len(ejes.patches) == 4  # dos entradas y dos salidas
-
-
-def test_tabla_de_verdad_no_devuelve_nada():
-    assert interruptores.tabla_de_verdad("NO", lambda a: not a, entradas=1) is None
-
-
 def test_dibujar_palabra_no_revienta_con_un_emoji():
     interruptores.dibujar_palabra("A\U0001faa8")
 
