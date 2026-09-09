@@ -221,3 +221,81 @@ def test_el_medio_sumador_vivo_repinta(monkeypatch):
 def test_medio_sumador_vivo_no_devuelve_nada():
     assert compuertas.medio_sumador_vivo() is None
     plt.close("all")
+
+
+def _valor_bajo_la_etiqueta(eje, etiqueta):
+    """El 0 o el 1 que _foco dibuja justo debajo del foco con ese rotulo."""
+    x, y = next(t.get_position() for t in eje.texts if t.get_text() == etiqueta)
+    debajo = [t for t in eje.texts
+              if abs(t.get_position()[0] - x) < 0.01
+              and t.get_position()[1] < y
+              and t.get_text() in ("0", "1")]
+    return min(debajo, key=lambda t: y - t.get_position()[1]).get_text()
+
+
+def test_con_los_dos_prendidos_la_suma_marca_cero_y_el_llevo_marca_uno():
+    # Sin esto, el dibujo podria tener los dos focos intercambiados y la prueba
+    # de arriba no lo notaria. La prosa de la parte 5 afirma cual se prende.
+    eje = compuertas._dibujar_medio_sumador(True, True)
+    assert _valor_bajo_la_etiqueta(eje, "suma") == "0"
+    assert _valor_bajo_la_etiqueta(eje, "llevo") == "1"
+    plt.close("all")
+
+
+from shift_enter.binario import a_binario
+
+
+def test_los_llevos_coinciden_con_el_resultado_de_sumar():
+    for a, b in ((13, 29), (255, 1), (0, 0), (170, 85)):
+        resultado, llevos = compuertas._llevos(a_binario(a), a_binario(b))
+        assert resultado == compuertas.sumar(a, b)
+        assert len(llevos) == 8
+
+
+def test_sin_llevos_cuando_no_se_encima_nada():
+    resultado, llevos = compuertas._llevos(a_binario(1), a_binario(2))
+    assert llevos == [False] * 8
+
+
+def test_el_llevo_se_propaga_de_derecha_a_izquierda():
+    # 255 + 1 obliga a que las ocho columnas se pasen.
+    resultado, llevos = compuertas._llevos(a_binario(255), a_binario(1))
+    assert llevos == [True] * 8
+
+
+def test_el_dibujo_del_sumador_ensena_los_tres_numeros():
+    eje = compuertas._dibujar_sumador(a_binario(13), a_binario(29))
+    textos = [t.get_text() for t in eje.texts]
+    assert "13" in textos
+    assert "29" in textos
+    assert "42" in textos
+    plt.close("all")
+
+
+def test_el_sumador_vivo_trae_dieciseis_interruptores():
+    botones_a, botones_b, salida = compuertas._sumador_vivo()
+    assert len(botones_a) == 8
+    assert len(botones_b) == 8
+    plt.close("all")
+
+
+def test_el_sumador_vivo_arranca_en_los_valores_pedidos():
+    botones_a, botones_b, salida = compuertas._sumador_vivo(a=13, b=29)
+    assert [b.value for b in botones_a] == a_binario(13)
+    assert [b.value for b in botones_b] == a_binario(29)
+    plt.close("all")
+
+
+def test_el_sumador_vivo_repinta_cuando_prendes_uno(monkeypatch):
+    pintados = []
+    monkeypatch.setattr(compuertas, "_dibujar_sumador",
+                        lambda *a, **k: pintados.append(a))
+    botones_a, botones_b, salida = compuertas._sumador_vivo(a=0, b=0)
+    de_arranque = len(pintados)
+    botones_a[0].value = True
+    assert len(pintados) == de_arranque + 1
+
+
+def test_sumador_vivo_no_devuelve_nada():
+    assert compuertas.sumador_vivo() is None
+    plt.close("all")

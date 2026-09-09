@@ -9,7 +9,7 @@ import ipywidgets as widgets
 import matplotlib.pyplot as plt
 from IPython.display import display
 
-from .binario import a_binario
+from .binario import TABLA_DE_VALORES, a_binario, a_decimal
 from .paleta import APAGADO, BORDE, ENCENDIDO, TENUE
 
 PRENDIDO = True
@@ -306,3 +306,94 @@ def medio_sumador_vivo():
     """Las cuatro sumas que existen, una por una, con el dedo."""
     a, b, salida = _medio_sumador_vivo()
     display(widgets.VBox([widgets.HBox([a, b]), salida]))
+
+
+def _llevos(bits_a, bits_b):
+    """Suma columna por columna y guarda el llevo que sale de cada una."""
+    resultado = [False] * 8
+    llevos = [False] * 8
+    llevo = APAGADO_LOGICO
+
+    for i in reversed(range(8)):
+        suma, llevo = sumador_completo(bits_a[i], bits_b[i], llevo)
+        resultado[i] = suma
+        llevos[i] = llevo
+
+    return resultado, llevos
+
+
+def _dibujar_sumador(bits_a, bits_b, ax=None):
+    """Las ocho columnas, con el llevo brincando de una a otra."""
+    resultado, llevos = _llevos(bits_a, bits_b)
+
+    propia = ax is None
+    if propia:
+        _, ax = plt.subplots(figsize=(10.5, 5.2))
+
+    filas = ((3.0, bits_a, str(a_decimal(bits_a))),
+             (1.8, bits_b, str(a_decimal(bits_b))),
+             (0.0, resultado, str(a_decimal(resultado))))
+
+    for y, bits, numero in filas:
+        for i, bit in enumerate(bits):
+            ax.add_patch(plt.Circle((i, y), 0.32, zorder=3, linewidth=1.6,
+                                    facecolor=ENCENDIDO if bit else APAGADO,
+                                    edgecolor=BORDE))
+        ax.text(8.6, y, numero, ha="left", va="center",
+                fontsize=20, weight="bold", family="monospace")
+
+    for i, valor in enumerate(TABLA_DE_VALORES):
+        ax.text(i, 3.75, str(valor), ha="center", va="center",
+                fontsize=9, color=TENUE)
+
+    # El llevo que sale de la columna i entra a la columna i-1, a su izquierda.
+    for i, llevo in enumerate(llevos):
+        if i == 0:
+            continue
+        ax.annotate("", xy=(i - 1 + 0.34, 1.05), xytext=(i - 0.34, 0.75),
+                    arrowprops=dict(arrowstyle="->", linewidth=2.2 if llevo else 1.2,
+                                    color=ENCENDIDO if llevo else BORDE))
+
+    ax.plot([-0.5, 7.5], [0.95, 0.95], linewidth=1.4, color=BORDE, zorder=1)
+    ax.text(-1.0, 3.0, "a", ha="right", va="center", fontsize=12, color=TENUE)
+    ax.text(-1.0, 1.8, "b", ha="right", va="center", fontsize=12, color=TENUE)
+    ax.text(-1.0, 0.0, "suma", ha="right", va="center", fontsize=12, color=TENUE)
+
+    ax.set_xlim(-2.2, 10.4)
+    ax.set_ylim(-0.9, 4.2)
+    ax.set_aspect("equal")
+    ax.axis("off")
+    if propia:
+        plt.tight_layout()
+    return ax
+
+
+def _sumador_vivo(a=13, b=29):
+    """Construye el sumador de ocho columnas. Version interna."""
+    botones_a = [widgets.ToggleButton(value=v, description=str(valor),
+                                      layout=widgets.Layout(width="58px"))
+                 for v, valor in zip(a_binario(a), TABLA_DE_VALORES)]
+    botones_b = [widgets.ToggleButton(value=v, description=str(valor),
+                                      layout=widgets.Layout(width="58px"))
+                 for v, valor in zip(a_binario(b), TABLA_DE_VALORES)]
+    salida = widgets.Output()
+
+    def pintar(_=None):
+        with salida:
+            salida.clear_output(wait=True)
+            _dibujar_sumador([x.value for x in botones_a],
+                             [x.value for x in botones_b])
+            plt.show()
+
+    for boton in botones_a + botones_b:
+        boton.observe(pintar, names="value")
+    pintar()
+    return botones_a, botones_b, salida
+
+
+def sumador_vivo(a=13, b=29):
+    """Arma la suma con el dedo y mira el llevo brincar de columna en columna."""
+    botones_a, botones_b, salida = _sumador_vivo(a, b)
+    display(widgets.VBox([widgets.HBox(botones_a),
+                          widgets.HBox(botones_b),
+                          salida]))
