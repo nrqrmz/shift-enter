@@ -52,6 +52,10 @@ import subprocess
 import sys
 import time
 
+from ipywidgets import Widget
+from matplotlib.axes import Axes
+from plotly.graph_objects import Figure
+
 if importlib.util.find_spec("shift_enter") is None:
     subprocess.run([sys.executable, "-m", "pip", "install", "-q",
                     "git+https://github.com/nrqrmz/shift-enter"], check=True)
@@ -64,10 +68,6 @@ paleta.aplicar_estilo()
 
 # Silencia el eco de las celdas: una figura no debe imprimir su
 # representación de texto debajo del dibujo que ya se guardó.
-from ipywidgets import Widget
-from matplotlib.axes import Axes
-from plotly.graph_objects import Figure
-
 _ip = get_ipython()
 if _ip is not None:
     _formateador = _ip.display_formatter.formatters["text/plain"]
@@ -78,6 +78,73 @@ if _ip is not None:
 print("Listo. La piedra esta encendida.")
 ''')
     md("**Corre esa celda antes que nada.** Trae las herramientas. Es el escenario, no la obra.")
+
+
+def seccion_nombre():
+    md("""
+---
+
+# 1 · Tu nombre ya está adentro
+
+Escribe tu nombre. Está guardado en esta computadora ahorita mismo.
+
+No como letras. Aquí adentro no hay letras. Solo hay números.
+""")
+    codigo('''
+mi_nombre = "Ada"    # ← pon el tuyo
+
+for letra in mi_nombre:
+    print(letra, "→", ord(letra))
+''')
+    md("""
+Ese número no es un apodo ni una traducción. **Es** la letra. Es lo único que
+hay de tu nombre dentro de la máquina.
+
+Y si tu nombre es una lista de números, entonces se puede escuchar.
+""")
+    codigo('''
+sonido.reproducir(sonido.melodia_del_nombre(mi_nombre))
+''')
+    md("""
+### 🔧 Prueba tú
+
+Si una letra es un número, súmale 3 y mira qué sale.
+""")
+    codigo('''
+def correr(texto, cuanto):
+    salida = ""
+    for letra in texto:
+        salida = salida + chr(ord(letra) + cuanto)
+    return salida
+
+
+secreto = correr(mi_nombre, 3)
+print("   cifrado:   ", secreto)
+print("   descifrado:", correr(secreto, -3))
+''')
+    md("""
+Julio César mandaba sus órdenes militares así, hace dos mil años. Le sumaba un
+número a cada letra y sus enemigos veían basura.
+
+Tú lo acabas de hacer con una suma.
+""")
+    md("""
+### 🎯 El reto
+
+Aquí hay un mensaje cifrado. Nadie te va a decir con qué número.
+
+Arrastra el corrimiento hasta que el mensaje se vuelva español.
+""")
+    codigo('''
+cifra.deslizador_disco(cifra.MENSAJE_RETO)
+''')
+    md("""
+### 🤔 Para pensar
+
+El espacio también se convirtió en otro símbolo cuando corriste las letras.
+
+¿Por qué? ¿Qué número crees que es un espacio?
+""")
 
 
 def construir(ruta="la-piedra-que-aprendio-a-contar.ipynb"):
@@ -98,4 +165,5 @@ def construir(ruta="la-piedra-que-aprendio-a-contar.ipynb"):
 
 if __name__ == "__main__":
     portada()
+    seccion_nombre()
     construir()

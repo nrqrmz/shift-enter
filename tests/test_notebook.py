@@ -62,6 +62,6 @@ def test_toda_funcion_de_concepto_que_ya_existe_vive_en_celda_visible(celdas):
     assert ofensivas == []
 
 
-# No hay aqui una prueba de que las ocho firmas de CONCEPTO esten completas:
+# No hay aquí una prueba de que las ocho firmas de CONCEPTO estén completas:
 # la Tarea 14 escribe esas ocho funciones a mano y agrega esa prueba junto
 # con ellas.
