@@ -5,7 +5,9 @@ todavia no ha visto una funcion, asi que arma el sumador con el dedo sobre
 los widgets de este modulo, no escribiendo estas lineas.
 """
 
+import ipywidgets as widgets
 import matplotlib.pyplot as plt
+from IPython.display import display
 
 from .binario import a_binario
 from .paleta import APAGADO, BORDE, ENCENDIDO, TENUE
@@ -111,3 +113,39 @@ def tabla_de_verdad(nombre, compuerta, entradas=2, resaltar=None):
     """Todo lo que puede pasar con una compuerta, dibujado."""
     _tabla_de_verdad(nombre, compuerta, entradas, resaltar)
     plt.show()
+
+
+def _panel_compuertas(a, b):
+    """Las tres tablas de verdad, con el renglon vigente iluminado."""
+    figura, ejes = plt.subplots(1, 3, figsize=(11, 4.2))
+    _tabla_de_verdad("NOT", NOT, entradas=1, resaltar=(a,), ax=ejes[0])
+    _tabla_de_verdad("AND", AND, resaltar=(a, b), ax=ejes[1])
+    _tabla_de_verdad("OR", OR, resaltar=(a, b), ax=ejes[2])
+    plt.tight_layout()
+    return figura
+
+
+def _probador():
+    """Construye el probador de compuertas. Version interna."""
+    a = widgets.ToggleButton(value=False, description="a",
+                             layout=widgets.Layout(width="70px"))
+    b = widgets.ToggleButton(value=False, description="b",
+                             layout=widgets.Layout(width="70px"))
+    salida = widgets.Output()
+
+    def pintar(_=None):
+        with salida:
+            salida.clear_output(wait=True)
+            _panel_compuertas(a.value, b.value)
+            plt.show()
+
+    a.observe(pintar, names="value")
+    b.observe(pintar, names="value")
+    pintar()
+    return a, b, salida
+
+
+def probador():
+    """Prende los dos interruptores y mira las tres compuertas a la vez."""
+    a, b, salida = _probador()
+    display(widgets.VBox([widgets.HBox([a, b]), salida]))

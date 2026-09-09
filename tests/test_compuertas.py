@@ -88,3 +88,35 @@ def test_tabla_de_verdad_sin_resaltar_no_resalta_nada():
 
 def test_tabla_de_verdad_publica_no_devuelve_nada():
     assert compuertas.tabla_de_verdad("NOT", compuertas.NOT, entradas=1) is None
+
+
+def test_el_panel_tiene_una_tabla_por_compuerta():
+    figura = compuertas._panel_compuertas(True, False)
+    assert len(figura.axes) == 3
+
+
+def test_el_probador_arranca_con_los_dos_apagados():
+    a, b, salida = compuertas._probador()
+    assert a.value is False
+    assert b.value is False
+
+
+def test_el_probador_rotula_sus_dos_interruptores():
+    a, b, salida = compuertas._probador()
+    assert a.description == "a"
+    assert b.description == "b"
+
+
+def test_el_probador_repinta_cuando_prendes_uno(monkeypatch):
+    pintados = []
+    monkeypatch.setattr(compuertas, "_panel_compuertas",
+                        lambda *a, **k: pintados.append(a))
+    a, b, salida = compuertas._probador()
+    de_arranque = len(pintados)
+    a.value = True
+    assert len(pintados) == de_arranque + 1
+    assert pintados[-1] == (True, False)
+
+
+def test_probador_no_devuelve_nada():
+    assert compuertas.probador() is None
