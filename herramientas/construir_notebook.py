@@ -227,6 +227,74 @@ imagen.mezclador_color()
 ''')
 
 
+def seccion_musica():
+    md("""
+---
+
+# 3 · Tu música es una lista de números
+
+Un sonido es aire que empuja y jala tu tímpano. Si mides cuánto empuja, muchísimas
+veces por segundo, te queda una lista de números.
+
+Aquí está una, vista de muy cerca. Y escuchada.
+""")
+    codigo('''
+la = sonido.onda(440)
+
+sonido.dibujar_onda(la)
+sonido.reproducir(la)
+''')
+    md("""
+### 🔧 Prueba tú
+
+Un solo número decide qué nota es. Arrástralo.
+""")
+    codigo('''
+sonido.deslizador_de_tono()
+''')
+    md("""
+### Y ahora rómpelo
+
+Si el sonido es una lista, se le puede hacer lo que sea a una lista. Toma menos
+números y sale más rápido. Léela del final al principio y sale al revés.
+""")
+    codigo('''
+sonido.reproducir(sonido.a_velocidad(la, 2))
+sonido.reproducir(sonido.al_reves(sonido.melodia_del_nombre(mi_nombre)))
+''')
+    md("""
+### Y ahora súmalos
+
+Tres sonidos. Súmalos como sumarías tres números.
+""")
+    codigo('''
+do  = sonido.onda(261.63)
+mi  = sonido.onda(329.63)
+sol = sonido.onda(392.00)
+
+acorde = do + mi + sol
+
+sonido.dibujar_onda([do, mi, sol, acorde],
+                    etiquetas=["do", "mi", "sol", "los tres sumados"],
+                    muestras=600)
+sonido.reproducir(acorde)
+''')
+    md("""
+### Lo que llevas
+
+Eso es un acorde de do mayor. No lo compusiste: lo **sumaste**.
+
+Tu nombre, tu cara y ese acorde entraron a la máquina y se convirtieron en lo
+mismo: listas de números.
+
+Y a los tres les hiciste exactamente la misma cosa para cambiarlos. Le sumaste 3
+a cada letra. Le sumaste 70 a cada pixel. Sumaste tres ondas.
+
+Por eso una sola máquina puede tocar música, editar fotos y guardar mensajes. No
+tiene tres talentos. Tiene uno.
+""")
+
+
 def construir(ruta="la-piedra-que-aprendio-a-contar.ipynb"):
     cuaderno = nbf.v4.new_notebook(cells=CELDAS)
     cuaderno.metadata.update({
@@ -247,4 +315,5 @@ if __name__ == "__main__":
     portada()
     seccion_nombre()
     seccion_foto()
+    seccion_musica()
     construir()
