@@ -186,3 +186,38 @@ def test_el_diagrama_xor_repinta_cuando_prendes_uno(monkeypatch):
 def test_diagrama_xor_no_devuelve_nada():
     assert compuertas.diagrama_xor() is None
     plt.close("all")
+
+
+def test_el_medio_sumador_vivo_rotula_suma_y_llevo():
+    eje = compuertas._dibujar_medio_sumador(True, True)
+    textos = [t.get_text() for t in eje.texts]
+    assert "suma" in textos
+    assert "llevo" in textos
+    plt.close("all")
+
+
+def test_con_los_dos_prendidos_el_llevo_conduce_y_la_suma_no():
+    eje = compuertas._dibujar_medio_sumador(True, True)
+    encendidos = [linea for linea in eje.lines
+                  if linea.get_color() == ENCENDIDO]
+    # El cable del llevo sale del AND; el de la suma sale del XOR y esta apagado.
+    assert encendidos != []
+    textos = [t.get_text() for t in eje.texts]
+    assert textos.count("0") >= 1   # la suma vale cero
+    assert textos.count("1") >= 1   # el llevo vale uno
+    plt.close("all")
+
+
+def test_el_medio_sumador_vivo_repinta(monkeypatch):
+    pintados = []
+    monkeypatch.setattr(compuertas, "_dibujar_medio_sumador",
+                        lambda *a, **k: pintados.append(a))
+    a, b, salida = compuertas._medio_sumador_vivo()
+    de_arranque = len(pintados)
+    a.value = True
+    assert len(pintados) == de_arranque + 1
+
+
+def test_medio_sumador_vivo_no_devuelve_nada():
+    assert compuertas.medio_sumador_vivo() is None
+    plt.close("all")

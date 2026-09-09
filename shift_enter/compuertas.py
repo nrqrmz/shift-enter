@@ -246,3 +246,63 @@ def diagrama_xor():
     """Mueve los interruptores y mira por donde pasa la corriente."""
     a, b, salida = _diagrama_xor()
     display(widgets.VBox([widgets.HBox([a, b]), salida]))
+
+
+def _dibujar_medio_sumador(a, b, ax=None):
+    """Dos interruptores entran, salen la suma y el llevo."""
+    a, b = bool(a), bool(b)
+    suma, llevo = medio_sumador(a, b)
+
+    propia = ax is None
+    if propia:
+        _, ax = plt.subplots(figsize=(8.4, 4.2))
+
+    _foco(ax, 0, 2.8, a, "a")
+    _foco(ax, 0, 0.6, b, "b")
+
+    _caja(ax, 3.0, 2.8, "XOR", suma)
+    _caja(ax, 3.0, 0.6, "AND", llevo)
+
+    _cable(ax, [(0.3, 2.8), (2.38, 2.8)], a)
+    _cable(ax, [(0.3, 0.6), (1.4, 0.6), (1.4, 2.55), (2.38, 2.55)], b)
+    _cable(ax, [(0.3, 2.8), (1.0, 2.8), (1.0, 0.85), (2.38, 0.85)], a)
+    _cable(ax, [(0.3, 0.6), (2.38, 0.6)], b)
+    _cable(ax, [(3.62, 2.8), (5.1, 2.8)], suma)
+    _cable(ax, [(3.62, 0.6), (5.1, 0.6)], llevo)
+
+    _foco(ax, 5.4, 2.8, suma, "suma")
+    _foco(ax, 5.4, 0.6, llevo, "llevo")
+
+    ax.set_xlim(-0.9, 6.4)
+    ax.set_ylim(-0.9, 3.8)
+    ax.set_aspect("equal")
+    ax.axis("off")
+    if propia:
+        plt.tight_layout()
+    return ax
+
+
+def _medio_sumador_vivo():
+    """Construye el medio sumador vivo. Version interna."""
+    a = widgets.ToggleButton(value=False, description="a",
+                             layout=widgets.Layout(width="70px"))
+    b = widgets.ToggleButton(value=False, description="b",
+                             layout=widgets.Layout(width="70px"))
+    salida = widgets.Output()
+
+    def pintar(_=None):
+        with salida:
+            salida.clear_output(wait=True)
+            _dibujar_medio_sumador(a.value, b.value)
+            plt.show()
+
+    a.observe(pintar, names="value")
+    b.observe(pintar, names="value")
+    pintar()
+    return a, b, salida
+
+
+def medio_sumador_vivo():
+    """Las cuatro sumas que existen, una por una, con el dedo."""
+    a, b, salida = _medio_sumador_vivo()
+    display(widgets.VBox([widgets.HBox([a, b]), salida]))
