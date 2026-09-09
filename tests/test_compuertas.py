@@ -68,11 +68,13 @@ def test_sumar_se_desborda_en_doscientos_cincuenta_y_seis():
 def test_tabla_de_verdad_de_una_entrada_tiene_dos_casos():
     eje = compuertas._tabla_de_verdad("NOT", compuertas.NOT, entradas=1)
     assert len(eje.patches) == 4  # dos entradas y dos salidas
+    plt.close("all")
 
 
 def test_tabla_de_verdad_de_dos_entradas_tiene_cuatro_casos():
     eje = compuertas._tabla_de_verdad("AND", compuertas.AND)
     assert len(eje.patches) == 12  # ocho entradas y cuatro salidas
+    plt.close("all")
 
 
 def test_tabla_de_verdad_resalta_el_renglon_vigente():
@@ -80,6 +82,7 @@ def test_tabla_de_verdad_resalta_el_renglon_vigente():
     resaltados = [p for p in eje.patches if getattr(p, "get_linewidth", None)
                   and p.get_linewidth() > 2]
     assert resaltados != []
+    plt.close("all")
 
 
 def test_tabla_de_verdad_sin_resaltar_no_resalta_nada():
@@ -87,27 +90,32 @@ def test_tabla_de_verdad_sin_resaltar_no_resalta_nada():
     resaltados = [p for p in eje.patches if getattr(p, "get_linewidth", None)
                   and p.get_linewidth() > 2]
     assert resaltados == []
+    plt.close("all")
 
 
 def test_tabla_de_verdad_publica_no_devuelve_nada():
     assert compuertas.tabla_de_verdad("NOT", compuertas.NOT, entradas=1) is None
+    plt.close("all")
 
 
 def test_el_panel_tiene_una_tabla_por_compuerta():
     figura = compuertas._panel_compuertas(True, False)
     assert len(figura.axes) == 3
+    plt.close("all")
 
 
 def test_el_probador_arranca_con_los_dos_apagados():
     a, b, salida = compuertas._probador()
     assert a.value is False
     assert b.value is False
+    plt.close("all")
 
 
 def test_el_probador_rotula_sus_dos_interruptores():
     a, b, salida = compuertas._probador()
     assert a.description == "a"
     assert b.description == "b"
+    plt.close("all")
 
 
 def test_el_probador_repinta_cuando_prendes_uno(monkeypatch):
@@ -123,6 +131,7 @@ def test_el_probador_repinta_cuando_prendes_uno(monkeypatch):
 
 def test_probador_no_devuelve_nada():
     assert compuertas.probador() is None
+    plt.close("all")
 
 
 def _cables_encendidos(eje):
@@ -176,3 +185,4 @@ def test_el_diagrama_xor_repinta_cuando_prendes_uno(monkeypatch):
 
 def test_diagrama_xor_no_devuelve_nada():
     assert compuertas.diagrama_xor() is None
+    plt.close("all")
