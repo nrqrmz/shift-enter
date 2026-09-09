@@ -295,6 +295,95 @@ tiene tres talentos. Tiene uno.
 """)
 
 
+def seccion_piedra():
+    md("""
+---
+
+# 4 · ¿Y cómo cabe todo eso en una piedra?
+
+Toma un puñado de arena de playa. Es dióxido de silicio.
+
+Derrítela. Purifícala hasta que de cada mil millones de átomos solo uno sea de
+otra cosa. Te queda un cristal gris, aburrido, que no hace absolutamente nada.
+
+Ahora graba en su superficie algo diminuto, miles de veces más delgado que un
+cabello, que hace **una sola cosa**: deja pasar la electricidad, o no la deja.
+
+Eso es un **transistor**. Un interruptor sin partes móviles.
+
+En el aparato donde estás leyendo esto hay varios **miles de millones**. Ninguno
+sabe sumar. Ninguno sabe leer. Solo están prendidos o apagados.
+""")
+    codigo('''
+prendido = True    # este es un valor booleano
+apagado  = False   # este es un valor booleano
+
+print("Para la maquina no se llaman 'prendido' y 'apagado'. Se llaman 1 y 0.")
+print("Y no es un apodo. Compruebalo:")
+print()
+print("   True  == 1   →", True == 1)
+print("   False == 0   →", False == 0)
+''')
+    md("""
+### Ocho interruptores
+
+Un interruptor solo tiene dos estados, así que solo puede guardar 0 o 1. Con
+ocho ya cabe cualquier número hasta 255.
+
+El truco es que cada columna vale **el doble** que su vecina de la derecha. En
+el sistema que ya usas cada columna vale diez veces más, y es diez solo porque
+tenemos diez dedos. Por nada más.
+
+**Préndelos con el dedo** y mira qué número sale.
+""")
+    codigo('''
+interruptores.tablero(valor_inicial=42)
+''')
+    md("""
+### Dale play
+
+Ahora míralos contar solos, del 0 al 255. **Mira las columnas, no el número.**
+""")
+    codigo('''
+interruptores.contador()
+''')
+    md("""
+El interruptor de la derecha se prende y se apaga en cada número. El siguiente,
+cada dos. El siguiente, cada cuatro.
+
+Cada uno va exactamente al doble de lento que su vecino de la derecha. Eso es
+todo lo que significa contar en binario.
+
+En 1679 Gottfried Leibniz escribió esto en un papel, sin computadoras y sin
+electricidad. Le pareció bello y ya. Fue un juguete inútil durante doscientos
+setenta años, hasta que alguien conectó unos interruptores y descubrió que el
+juguete era exactamente lo que la máquina necesitaba.
+""")
+    md("""
+### Tu nombre, otra vez
+
+En la §1 tu nombre era una lista de números. Así es como está guardado de verdad.
+""")
+    codigo('''
+interruptores.dibujar_palabra(mi_nombre)
+''')
+    md("""
+### Donde se acaban
+
+Con ocho interruptores el número más grande que existe es este. No hay uno más.
+""")
+    codigo('''
+interruptores.dibujar(a_binario(255), etiquetas=TABLA_DE_VALORES,
+                      mostrar_bool=False, titulo="el mas grande que cabe")
+''')
+    md("""
+### 🤔 Para pensar
+
+¿Por qué justo 255, y no 256? ¿Y cuántos números distintos caben en ocho
+interruptores, contando el cero?
+""")
+
+
 def construir(ruta="la-piedra-que-aprendio-a-contar.ipynb"):
     cuaderno = nbf.v4.new_notebook(cells=CELDAS)
     cuaderno.metadata.update({
@@ -316,4 +405,5 @@ if __name__ == "__main__":
     seccion_nombre()
     seccion_foto()
     seccion_musica()
+    seccion_piedra()
     construir()
