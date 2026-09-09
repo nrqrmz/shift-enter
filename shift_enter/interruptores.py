@@ -1,12 +1,16 @@
 """Interruptores: dibujados, y prendibles con el dedo."""
 
+import ipywidgets as widgets
 import matplotlib.pyplot as plt
+from IPython.display import display
 
-from .binario import TABLA_DE_VALORES, NoCabe, a_binario
+from .binario import TABLA_DE_VALORES, NoCabe, a_binario, a_decimal
 from .paleta import APAGADO, BORDE, ENCENDIDO, TENUE
 
 PRENDIDO = "●"
 APAGADO_SIMBOLO = "○"
+ENCENDIDO_HTML = ENCENDIDO
+APAGADO_HTML = APAGADO
 
 
 def simbolo(estado):
@@ -98,3 +102,69 @@ def dibujar_palabra(texto):
             continue
         dibujar(bits, etiquetas=TABLA_DE_VALORES, mostrar_bool=False,
                 titulo=f"{letra}   →   {numero}")
+
+
+def como_html(bits, etiquetas=None):
+    """Los interruptores como circulos de HTML. Se actualiza al instante."""
+    piezas = []
+    for i, bit in enumerate(bits):
+        color = ENCENDIDO_HTML if bit else APAGADO_HTML
+        etiqueta = "" if etiquetas is None else str(etiquetas[i])
+        piezas.append(
+            f"<div style='display:inline-block;text-align:center;margin:0 6px'>"
+            f"<div style='font-size:11px;color:#777'>{etiqueta}</div>"
+            f"<div style='width:38px;height:38px;border-radius:50%;"
+            f"background:{color};border:2px solid {BORDE}'></div>"
+            f"<div style='font-family:monospace;font-weight:bold'>{int(bool(bit))}</div>"
+            f"</div>"
+        )
+    return "<div>" + "".join(piezas) + "</div>"
+
+
+def _marcador(bits):
+    numero = a_decimal(bits)
+    partes = " + ".join(str(v) for b, v in zip(bits, TABLA_DE_VALORES) if b)
+    return (f"{como_html(bits, TABLA_DE_VALORES)}"
+            f"<div style='font-size:40px;font-weight:bold;margin-top:8px'>{numero}</div>"
+            f"<div style='color:#777'>{partes or 'ningun interruptor prendido'}</div>")
+
+
+def tablero(valor_inicial=0):
+    """Ocho interruptores que prendes con el dedo."""
+    botones = [widgets.ToggleButton(value=v, description=str(valor),
+                                    layout=widgets.Layout(width="60px"))
+               for v, valor in zip(a_binario(valor_inicial), TABLA_DE_VALORES)]
+    marcador = widgets.HTML()
+
+    def actualizar(_=None):
+        marcador.value = _marcador([b.value for b in botones])
+
+    for boton in botones:
+        boton.observe(actualizar, names="value")
+    actualizar()
+    # Un cuadro fijo antes del widget: el estado de los widgets no se guarda,
+    # asi que sin esto la celda se ve vacia para quien lee en GitHub.
+    dibujar(a_binario(valor_inicial), etiquetas=TABLA_DE_VALORES, mostrar_bool=False,
+            titulo=f"empieza en {valor_inicial}")
+    display(widgets.VBox([widgets.HBox(botones), marcador]))
+    return botones, marcador
+
+
+def contador(desde=0, hasta=255, ms=200):
+    """El boton de play contando en binario."""
+    reproductor = widgets.Play(value=desde, min=desde, max=hasta, interval=ms)
+    deslizador = widgets.IntSlider(value=desde, min=desde, max=hasta, description="numero")
+    widgets.link((reproductor, "value"), (deslizador, "value"))
+    salida = widgets.HTML()
+
+    def pintar(cambio):
+        n = cambio["new"]
+        salida.value = (f"{como_html(a_binario(n), TABLA_DE_VALORES)}"
+                        f"<div style='font-size:40px;font-weight:bold'>{n}</div>")
+
+    deslizador.observe(pintar, names="value")
+    pintar({"new": desde})
+    dibujar(a_binario(desde), etiquetas=TABLA_DE_VALORES, mostrar_bool=False,
+            titulo=f"empieza en {desde}")
+    display(widgets.VBox([widgets.HBox([reproductor, deslizador]), salida]))
+    return reproductor, deslizador, salida
