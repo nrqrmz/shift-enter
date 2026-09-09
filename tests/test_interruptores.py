@@ -1,3 +1,5 @@
+import warnings
+
 import matplotlib.pyplot as plt
 
 from shift_enter import interruptores
@@ -41,6 +43,18 @@ def test_dibujar_palabra_no_revienta_con_un_emoji():
     eje = interruptores.dibujar_palabra("A\U0001faa8")
     textos = [t.get_text() for t in eje.texts]
     assert any("no cabe" in t or "interruptores" in t for t in textos)
+    plt.close("all")
+
+
+def test_dibujar_palabra_no_manda_a_la_fuente_un_caracter_sin_glifo():
+    figura, eje = plt.subplots()
+    interruptores.dibujar_palabra("A\U0001faa8", ax=eje)
+    textos = [t.get_text() for t in eje.texts]
+    assert not any("\U0001faa8" in texto for texto in textos)
+    assert any("interruptores" in texto for texto in textos)
+    with warnings.catch_warnings():
+        warnings.simplefilter("error", UserWarning)
+        figura.canvas.draw()
     plt.close("all")
 
 

@@ -69,8 +69,13 @@ def dibujar_palabra(texto, ax=None):
         try:
             bits = a_binario(numero)
         except NoCabe as no_cabe:
-            ax.text(0, y, f"{letra}  →  {numero}   {no_cabe}",
-                    ha="left", va="center", fontsize=11, color=TENUE)
+            # El caracter no se dibuja: si no cabe en ocho interruptores,
+            # tampoco hay glifo para el en la fuente, y mandarlo hace que
+            # matplotlib avise. Se ensena el numero y el porque.
+            ax.text(-1.2, y, str(numero), ha="right", va="center",
+                    fontsize=12, family="monospace")
+            ax.text(0, y, str(no_cabe), ha="left", va="center",
+                    fontsize=11, color=TENUE)
             continue
         ax.text(-1.2, y, f"{letra}   →   {numero}", ha="right", va="center",
                 fontsize=12, family="monospace")
