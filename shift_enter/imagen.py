@@ -83,16 +83,20 @@ def selector():
     return subir
 
 
-def mostrar_con_numeros(arreglo, titulo=None):
-    """La foto por dentro. Pasa el mouse y lee el numero de cada pixel."""
+def _mostrar_con_numeros(arreglo, titulo=None):
+    """Construye la figura de la foto por dentro. Version interna."""
     figura = px.imshow(arreglo, color_continuous_scale="gray", zmin=0, zmax=255,
                        title=titulo)
     figura.update_traces(
         hovertemplate="fila %{y}, columna %{x}<br><b>%{z}</b><extra></extra>")
     figura.update_layout(coloraxis_showscale=False, dragmode="zoom",
                          margin=dict(l=10, r=10, t=45, b=10))
-    figura.show()
     return figura
+
+
+def mostrar_con_numeros(arreglo, titulo=None):
+    """La foto por dentro. Pasa el mouse y lee el numero de cada pixel."""
+    _mostrar_con_numeros(arreglo, titulo).show()
 
 
 def deslizador_brillo(arreglo):

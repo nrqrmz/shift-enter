@@ -18,13 +18,17 @@ def test_la_foto_subida_reemplaza_a_la_de_respaldo():
 
 
 def test_mostrar_con_numeros_devuelve_una_figura_de_plotly():
-    figura = imagen.mostrar_con_numeros(imagen.desde_texto("#."))
+    figura = imagen._mostrar_con_numeros(imagen.desde_texto("#."))
     assert figura.data[0].type == "heatmap"
 
 
 def test_mostrar_con_numeros_ensena_el_valor_al_pasar_el_mouse():
-    figura = imagen.mostrar_con_numeros(imagen.desde_texto("#."))
+    figura = imagen._mostrar_con_numeros(imagen.desde_texto("#."))
     assert "%{z}" in figura.data[0].hovertemplate
+
+
+def test_mostrar_con_numeros_no_devuelve_nada():
+    assert imagen.mostrar_con_numeros(imagen.desde_texto("#.")) is None
 
 
 def test_el_selector_acepta_imagenes():
