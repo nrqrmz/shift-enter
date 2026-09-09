@@ -26,4 +26,5 @@ filterwarnings = [
     "ignore:FigureCanvasAgg is non-interactive, and thus cannot be shown:UserWarning",
     "ignore:`ipykernel\\.pylab\\.backend_inline` is deprecated, directly use `matplotlib_inline\\.backend_inline`:DeprecationWarning",
     "ignore:Jupyter is migrating its paths to use standard platformdirs:DeprecationWarning",
+    "ignore:\\*scattermapbox\\* is deprecated! Use \\*scattermap\\* instead\\.:DeprecationWarning",
 ]
