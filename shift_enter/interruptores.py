@@ -14,6 +14,7 @@ PRENDIDO = "●"
 APAGADO_SIMBOLO = "○"
 ENCENDIDO_HTML = ENCENDIDO
 APAGADO_HTML = APAGADO
+HILO_DEL_CONTADOR = "contador-binario"
 
 
 def simbolo(estado):
@@ -167,19 +168,22 @@ def _contador(desde=0, hasta=255, ms=200):
     deslizador.observe(pintar, names="value")
     pintar({"new": desde})
 
-    def avanzar():
-        # ipywidgets no trae un boton de play solo: el suyo son tres botones
-        # pegados. Este hilo es lo que lo sustituye. Es demonio, asi que no
-        # deja al kernel colgado si alguien cierra la pestana con el play
-        # prendido.
-        while play.value:
+    corrida = {"numero": 0}
+
+    def avanzar(mia):
+        # Cada apreton del boton, prendiendo o apagando, le pone numero nuevo a
+        # la corrida. Un hilo que viene de un apreton anterior lo nota al
+        # despertar y se retira, asi que nunca hay dos avanzando el deslizador.
+        while play.value and corrida["numero"] == mia:
             deslizador.value = _siguiente(deslizador.value, desde, hasta)
             time.sleep(ms / 1000)
 
     def al_presionar(cambio):
+        corrida["numero"] = corrida["numero"] + 1
         if cambio["new"]:
             play.description, play.icon = "pausa", "pause"
-            threading.Thread(target=avanzar, daemon=True).start()
+            threading.Thread(target=avanzar, args=(corrida["numero"],),
+                             name=HILO_DEL_CONTADOR, daemon=True).start()
         else:
             play.description, play.icon = "play", "play"
 
