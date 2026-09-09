@@ -129,8 +129,8 @@ def _marcador(bits):
             f"<div style='color:#777'>{partes or 'ningun interruptor prendido'}</div>")
 
 
-def tablero(valor_inicial=0):
-    """Ocho interruptores que prendes con el dedo."""
+def _tablero(valor_inicial=0):
+    """Construye ocho interruptores que prendes con el dedo. Version interna."""
     botones = [widgets.ToggleButton(value=v, description=str(valor),
                                     layout=widgets.Layout(width="60px"))
                for v, valor in zip(a_binario(valor_inicial), TABLA_DE_VALORES)]
@@ -142,16 +142,21 @@ def tablero(valor_inicial=0):
     for boton in botones:
         boton.observe(actualizar, names="value")
     actualizar()
+    return botones, marcador
+
+
+def tablero(valor_inicial=0):
+    """Ocho interruptores que prendes con el dedo."""
+    botones, marcador = _tablero(valor_inicial)
     # Un cuadro fijo antes del widget: el estado de los widgets no se guarda,
     # asi que sin esto la celda se ve vacia para quien lee en GitHub.
     dibujar(a_binario(valor_inicial), etiquetas=TABLA_DE_VALORES, mostrar_bool=False,
             titulo=f"empieza en {valor_inicial}")
     display(widgets.VBox([widgets.HBox(botones), marcador]))
-    return botones, marcador
 
 
-def contador(desde=0, hasta=255, ms=200):
-    """El boton de play contando en binario."""
+def _contador(desde=0, hasta=255, ms=200):
+    """Construye el boton de play contando en binario. Version interna."""
     reproductor = widgets.Play(value=desde, min=desde, max=hasta, interval=ms)
     deslizador = widgets.IntSlider(value=desde, min=desde, max=hasta, description="numero")
     widgets.link((reproductor, "value"), (deslizador, "value"))
@@ -164,7 +169,12 @@ def contador(desde=0, hasta=255, ms=200):
 
     deslizador.observe(pintar, names="value")
     pintar({"new": desde})
+    return reproductor, deslizador, salida
+
+
+def contador(desde=0, hasta=255, ms=200):
+    """El boton de play contando en binario."""
+    reproductor, deslizador, salida = _contador(desde, hasta, ms)
     dibujar(a_binario(desde), etiquetas=TABLA_DE_VALORES, mostrar_bool=False,
             titulo=f"empieza en {desde}")
     display(widgets.VBox([widgets.HBox([reproductor, deslizador]), salida]))
-    return reproductor, deslizador, salida
