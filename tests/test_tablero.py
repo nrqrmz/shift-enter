@@ -26,10 +26,37 @@ def test_el_tablero_reacciona_cuando_prendes_uno():
 
 
 def test_el_contador_va_de_cero_a_doscientos_cincuenta_y_cinco():
-    reproductor, deslizador, salida = interruptores._contador()
-    assert reproductor.min == 0 and reproductor.max == 255
+    play, deslizador, salida = interruptores._contador()
+    assert deslizador.min == 0 and deslizador.max == 255
     deslizador.value = 255
     assert "255" in salida.value
+
+
+def test_el_deslizador_del_contador_es_ancho():
+    play, deslizador, salida = interruptores._contador()
+    assert deslizador.layout.width == "620px"
+
+
+def test_el_contador_trae_un_solo_boton_de_play():
+    play, deslizador, salida = interruptores._contador()
+    assert play.description == "play"
+    assert play.value is False
+
+
+def test_el_boton_dice_pausa_mientras_corre():
+    play, deslizador, salida = interruptores._contador(ms=5000)
+    play.value = True
+    try:
+        assert play.description == "pausa"
+    finally:
+        play.value = False
+    assert play.description == "play"
+
+
+def test_el_contador_da_la_vuelta_al_llegar_al_tope():
+    assert interruptores._siguiente(254, 0, 255) == 255
+    assert interruptores._siguiente(255, 0, 255) == 0
+    assert interruptores._siguiente(0, 0, 255) == 1
 
 
 def test_tablero_devuelve_none():
@@ -42,10 +69,12 @@ def test_contador_devuelve_none():
     assert resultado is None
 
 
-def test_los_juguetes_dejan_un_cuadro_fijo_antes_del_widget(monkeypatch):
+def test_los_juguetes_no_dejan_cuadro_fijo_antes_del_widget(monkeypatch):
+    # Colab es el unico blanco: la celda se corre siempre, asi que ya no hay
+    # que dibujar nada para quien la lea sin ejecutarla.
     dibujados = []
     monkeypatch.setattr(interruptores, "dibujar",
                         lambda *a, **k: dibujados.append(a))
     interruptores.tablero(valor_inicial=5)
     interruptores.contador()
-    assert len(dibujados) == 2
+    assert dibujados == []
