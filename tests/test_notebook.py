@@ -4,6 +4,7 @@ from pathlib import Path
 import pytest
 
 NOTEBOOK = Path(__file__).resolve().parents[1] / "la-piedra-que-aprendio-a-contar.ipynb"
+PAQUETE = Path(__file__).resolve().parents[1] / "shift_enter"
 GRAFICACION = ("plt.", "px.", "matplotlib", "plotly", "sns.", "fig,")
 CONCEPTO = ("def correr(", "def NO(", "def Y(", "def O(", "def XOR(",
             "def medio_sumador(", "def sumador_completo(", "def sumar(")
@@ -45,6 +46,22 @@ def test_ninguna_celda_visible_importa(celdas):
     assert ofensivas == []
 
 
-def test_el_alumno_escribe_el_concepto_a_mano(celdas):
-    fuente = "\n".join("".join(celda["source"]) for _, celda in visibles(celdas))
-    assert [firma for firma in CONCEPTO if firma not in fuente] == []
+def test_el_concepto_nunca_migra_al_paquete():
+    fuente = "\n".join(archivo.read_text(encoding="utf-8")
+                        for archivo in sorted(PAQUETE.rglob("*.py")))
+    ofensivas = [firma for firma in CONCEPTO if firma in fuente]
+    assert ofensivas == []
+
+
+def test_toda_funcion_de_concepto_que_ya_existe_vive_en_celda_visible(celdas):
+    codigo = [(i, celda) for i, celda in enumerate(celdas) if celda["cell_type"] == "code"]
+    fuente_completa = "\n".join("".join(celda["source"]) for _, celda in codigo)
+    fuente_visible = "\n".join("".join(celda["source"]) for _, celda in visibles(celdas))
+    presentes = [firma for firma in CONCEPTO if firma in fuente_completa]
+    ofensivas = [firma for firma in presentes if firma not in fuente_visible]
+    assert ofensivas == []
+
+
+# No hay aqui una prueba de que las ocho firmas de CONCEPTO esten completas:
+# la Tarea 14 escribe esas ocho funciones a mano y agrega esa prueba junto
+# con ellas.
