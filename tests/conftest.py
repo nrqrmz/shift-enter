@@ -9,9 +9,9 @@ escapan del proceso de pytest hacia el mundo real:
   a "browser": cada figura.show() abre una pestaña nueva del navegador.
 
 "plotly_mimetype" emite un payload de display para IPython, que no hace
-nada en absoluto fuera de un kernel, asi que .show() queda inerte aqui sin
-tocar mostrar_con_numeros ni el renderer que fija la propia celda de forma
-de la notebook para Colab.
+nada en absoluto fuera de un kernel, asi que .show() queda inerte aqui.
+Dentro de Colab no aplica nada de esto: alla plotly detecta el entorno solo
+y la notebook ya no le impone ningun renderer.
 
 No borrar esto: sin las dos lineas de abajo, correr `pytest` vuelve a
 abrirle una ventana y un navegador al que lo corra.

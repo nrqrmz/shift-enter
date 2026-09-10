@@ -35,22 +35,18 @@ def test_el_selector_acepta_imagenes():
     assert subir.multiple is False
 
 
-def test_deslizador_brillo_deja_un_cuadro_fijo_antes_del_widget(monkeypatch):
+def test_deslizador_brillo_no_deja_cuadro_fijo_antes_del_widget(monkeypatch):
     llamadas = []
     monkeypatch.setattr(imagen, "mostrar", lambda *a, **k: llamadas.append((a, k)))
     arreglo = imagen.desde_texto("#.")
     imagen.deslizador_brillo(arreglo)
-    # Dos llamadas: el cuadro fijo explicito y el render inicial de @interact
-    # (que tambien dibuja con brillo 0, el valor por defecto del deslizador).
-    # Si se borra la linea del cuadro fijo, solo queda una.
-    assert len(llamadas) == 2
+    # Una sola llamada: el render inicial de @interact. Colab es el unico
+    # blanco, asi que ya no se dibuja nada para quien lea sin ejecutar.
+    assert len(llamadas) == 1
 
 
-def test_mezclador_color_deja_un_cuadro_fijo_antes_del_widget(monkeypatch):
+def test_mezclador_color_no_deja_cuadro_fijo_antes_del_widget(monkeypatch):
     llamadas = []
     monkeypatch.setattr(imagen, "_dibujar_muestra", lambda *a, **k: llamadas.append((a, k)))
     imagen.mezclador_color()
-    # Dos llamadas: el cuadro fijo explicito y el render inicial de @interact
-    # (que tambien dibuja con los valores por defecto de los deslizadores).
-    # Si se borra la linea del cuadro fijo, solo queda una.
-    assert len(llamadas) == 2
+    assert len(llamadas) == 1

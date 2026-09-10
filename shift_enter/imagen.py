@@ -101,10 +101,6 @@ def mostrar_con_numeros(arreglo, titulo=None):
 
 def deslizador_brillo(arreglo):
     """Sumale un numero a cada pixel y mira que pasa."""
-    # Un cuadro fijo antes del widget: el estado de los widgets no se guarda,
-    # asi que sin esto la celda se ve vacia para quien lee en GitHub.
-    mostrar(arreglo, titulo="foto + (0)")
-
     @interact(brillo=widgets.IntSlider(min=-150, max=150, value=0, description="+"))
     def _(brillo):
         mostrar(mas_brillo(arreglo, brillo), titulo=f"foto + ({brillo})")
@@ -125,10 +121,6 @@ def _dibujar_muestra(rojo, verde, azul):
 
 def mezclador_color():
     """Cualquier color del mundo, con tres numeros."""
-    # Un cuadro fijo antes del widget: el estado de los widgets no se guarda,
-    # asi que sin esto la celda se ve vacia para quien lee en GitHub.
-    _dibujar_muestra(200, 90, 30)
-
     @interact(rojo=widgets.IntSlider(min=0, max=255, value=200, description="rojo"),
               verde=widgets.IntSlider(min=0, max=255, value=90, description="verde"),
               azul=widgets.IntSlider(min=0, max=255, value=30, description="azul"))

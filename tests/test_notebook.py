@@ -4,10 +4,10 @@ from pathlib import Path
 import pytest
 
 NOTEBOOK = Path(__file__).resolve().parents[1] / "la-piedra-que-aprendio-a-contar.ipynb"
-PAQUETE = Path(__file__).resolve().parents[1] / "shift_enter"
+PAQUETE_COMPUERTAS = Path(__file__).resolve().parents[1] / "shift_enter" / "compuertas.py"
 GRAFICACION = ("plt.", "px.", "matplotlib", "plotly", "sns.", "fig,")
-CONCEPTO = ("def correr(", "def NO(", "def Y(", "def O(", "def XOR(",
-            "def medio_sumador(", "def sumador_completo(", "def sumar(")
+PROHIBIDAS = ("basura", "corrimiento", "desplazamiento", "inútil",
+              "aburrido", "§")
 
 
 @pytest.fixture(scope="module")
@@ -46,23 +46,43 @@ def test_ninguna_celda_visible_importa(celdas):
     assert ofensivas == []
 
 
-def test_el_concepto_nunca_migra_al_paquete():
+def test_ninguna_celda_visible_define_una_funcion(celdas):
+    # La notebook es de descubrimiento: el alumno todavia no ha visto una
+    # funcion, asi que arma el sumador con el dedo sobre los widgets del
+    # paquete. Todo 'def' vive en shift_enter.
+    ofensivas = [i for i, celda in visibles(celdas)
+                 if "def " in "".join(celda["source"])]
+    assert ofensivas == []
+
+
+def test_solo_la_celda_que_califica_conserva_un_if(celdas):
+    # Unica excepcion autorizada: ahi ver el codigo es lo que hace que la
+    # prueba contra el + de Python valga como prueba y no como afirmacion.
+    con_if = [i for i, celda in visibles(celdas)
+              if "if " in "".join(celda["source"])]
+    assert len(con_if) == 1
+    assert "aciertos" in "".join(celdas[con_if[0]]["source"])
+
+
+def test_las_compuertas_viven_en_el_paquete():
+    fuente = (PAQUETE_COMPUERTAS).read_text(encoding="utf-8")
+    for firma in ("def NOT(", "def AND(", "def OR(", "def XOR(",
+                  "def medio_sumador(", "def sumador_completo(", "def sumar("):
+        assert firma in fuente
+
+
+def test_la_notebook_no_usa_vocabulario_retirado():
+    # Sobre el archivo completo, no solo las celdas: el bloque de estado de
+    # los widgets en metadata guarda las etiquetas de los deslizadores, y ahi
+    # sobrevivia "corrimiento" de la ejecucion vieja.
+    crudo = NOTEBOOK.read_text(encoding="utf-8")
+    ofensivas = [palabra for palabra in PROHIBIDAS if palabra in crudo]
+    assert ofensivas == []
+
+
+def test_el_paquete_no_usa_vocabulario_retirado():
+    paquete = Path(__file__).resolve().parents[1] / "shift_enter"
     fuente = "\n".join(archivo.read_text(encoding="utf-8")
-                        for archivo in sorted(PAQUETE.rglob("*.py")))
-    ofensivas = [firma for firma in CONCEPTO if firma in fuente]
+                       for archivo in sorted(paquete.rglob("*.py")))
+    ofensivas = [palabra for palabra in PROHIBIDAS if palabra in fuente]
     assert ofensivas == []
-
-
-def test_toda_funcion_de_concepto_que_ya_existe_vive_en_celda_visible(celdas):
-    codigo = [(i, celda) for i, celda in enumerate(celdas) if celda["cell_type"] == "code"]
-    fuente_completa = "\n".join("".join(celda["source"]) for _, celda in codigo)
-    fuente_visible = "\n".join("".join(celda["source"]) for _, celda in visibles(celdas))
-    presentes = [firma for firma in CONCEPTO if firma in fuente_completa]
-    ofensivas = [firma for firma in presentes if firma not in fuente_visible]
-    assert ofensivas == []
-
-
-def test_toda_firma_de_concepto_vive_en_una_celda_visible(celdas):
-    fuente_visible = "\n".join("".join(celda["source"]) for _, celda in visibles(celdas))
-    ausentes = [firma for firma in CONCEPTO if firma not in fuente_visible]
-    assert ausentes == []

@@ -1,5 +1,8 @@
 """Interruptores: dibujados, y prendibles con el dedo."""
 
+import threading
+import time
+
 import ipywidgets as widgets
 import matplotlib.pyplot as plt
 from IPython.display import display
@@ -11,6 +14,7 @@ PRENDIDO = "●"
 APAGADO_SIMBOLO = "○"
 ENCENDIDO_HTML = ENCENDIDO
 APAGADO_HTML = APAGADO
+HILO_DEL_CONTADOR = "contador-binario"
 
 
 def simbolo(estado):
@@ -53,58 +57,46 @@ def dibujar(bits, etiquetas=None, titulo=None, mostrar_bool=True, ax=None):
     return ax
 
 
-def _tabla_de_verdad(nombre, compuerta, entradas=2):
-    """Construye la figura con todo lo que puede pasar con una compuerta. Version interna."""
-    if entradas == 1:
-        casos = [(a,) for a in (False, True)]
-        encabezados = ["a"]
-    else:
-        casos = [(a, b) for a in (False, True) for b in (False, True)]
-        encabezados = ["a", "b"]
+def dibujar_palabra(texto, ax=None):
+    """Cada letra de un texto, en ocho interruptores, todas en una figura."""
+    letras = list(texto)
+    propia = ax is None
+    if propia:
+        _, ax = plt.subplots(figsize=(9.5, 0.95 * len(letras) + 0.8))
 
-    salida_x = len(encabezados) * 0.85 + 0.75
-    figura, ax = plt.subplots(figsize=(salida_x + 1.3, 0.85 * len(casos) + 1.2))
-
-    for j, h in enumerate(encabezados):
-        ax.text(j * 0.85, 0.85, h, ha="center", fontsize=12, color="0.35")
-    ax.text(salida_x, 0.85, nombre, ha="center", fontsize=12, weight="bold")
-
-    for fila, caso in enumerate(casos):
+    for fila, letra in enumerate(letras):
         y = -fila
-        for j, v in enumerate(caso):
-            ax.add_patch(plt.Circle((j * 0.85, y), 0.28, zorder=2, linewidth=1.4,
-                                    facecolor=ENCENDIDO if v else APAGADO, edgecolor=BORDE))
-        ax.text(salida_x - 0.75, y, "→", ha="center", va="center",
-                fontsize=15, color=TENUE)
-        s = compuerta(*caso)
-        ax.add_patch(plt.Circle((salida_x, y), 0.28, zorder=2, linewidth=1.4,
-                                facecolor=ENCENDIDO if s else APAGADO, edgecolor=BORDE))
-
-    ax.set_xlim(-0.55, salida_x + 0.55)
-    ax.set_ylim(-len(casos) + 0.1, 1.25)
-    ax.set_aspect("equal")
-    ax.axis("off")
-    plt.tight_layout()
-    return figura
-
-
-def tabla_de_verdad(nombre, compuerta, entradas=2):
-    """Todo lo que puede pasar con una compuerta, dibujado."""
-    _tabla_de_verdad(nombre, compuerta, entradas)
-    plt.show()
-
-
-def dibujar_palabra(texto):
-    """Cada letra de un texto, en ocho interruptores."""
-    for letra in texto:
         numero = ord(letra)
         try:
             bits = a_binario(numero)
         except NoCabe as no_cabe:
-            print(f"   {letra}  →  {numero}   {no_cabe}")
+            # El caracter no se dibuja: si no cabe en ocho interruptores,
+            # tampoco hay glifo para el en la fuente, y mandarlo hace que
+            # matplotlib avise. Se ensena el numero y el porque.
+            ax.text(-1.2, y, str(numero), ha="right", va="center",
+                    fontsize=12, family="monospace")
+            ax.text(0, y, str(no_cabe), ha="left", va="center",
+                    fontsize=11, color=TENUE)
             continue
-        dibujar(bits, etiquetas=TABLA_DE_VALORES, mostrar_bool=False,
-                titulo=f"{letra}   →   {numero}")
+        ax.text(-1.2, y, f"{letra}   →   {numero}", ha="right", va="center",
+                fontsize=12, family="monospace")
+        for i, bit in enumerate(bits):
+            ax.add_patch(plt.Circle((i, y), 0.33, zorder=2, linewidth=1.5,
+                                    facecolor=ENCENDIDO if bit else APAGADO,
+                                    edgecolor=BORDE))
+
+    for i, valor in enumerate(TABLA_DE_VALORES):
+        ax.text(i, 0.85, str(valor), ha="center", va="center",
+                fontsize=9, color=TENUE)
+
+    ax.set_xlim(-5.2, 7.7)
+    ax.set_ylim(-len(letras) + 0.3, 1.3)
+    ax.set_aspect("equal")
+    ax.axis("off")
+    if propia:
+        plt.tight_layout()
+        plt.show()
+    return ax
 
 
 def como_html(bits, etiquetas=None):
@@ -151,18 +143,21 @@ def _tablero(valor_inicial=0):
 def tablero(valor_inicial=0):
     """Ocho interruptores que prendes con el dedo."""
     botones, marcador = _tablero(valor_inicial)
-    # Un cuadro fijo antes del widget: el estado de los widgets no se guarda,
-    # asi que sin esto la celda se ve vacia para quien lee en GitHub.
-    dibujar(a_binario(valor_inicial), etiquetas=TABLA_DE_VALORES, mostrar_bool=False,
-            titulo=f"empieza en {valor_inicial}")
     display(widgets.VBox([widgets.HBox(botones), marcador]))
 
 
+def _siguiente(valor, desde, hasta):
+    """El numero que sigue, dando la vuelta al llegar al tope."""
+    return desde if valor + 1 > hasta else valor + 1
+
+
 def _contador(desde=0, hasta=255, ms=200):
-    """Construye el boton de play contando en binario. Version interna."""
-    reproductor = widgets.Play(value=desde, min=desde, max=hasta, interval=ms)
-    deslizador = widgets.IntSlider(value=desde, min=desde, max=hasta, description="número")
-    widgets.link((reproductor, "value"), (deslizador, "value"))
+    """Construye el contador con su boton de play. Version interna."""
+    deslizador = widgets.IntSlider(value=desde, min=desde, max=hasta,
+                                   description="número",
+                                   layout=widgets.Layout(width="620px"))
+    play = widgets.ToggleButton(value=False, description="play", icon="play",
+                                layout=widgets.Layout(width="100px"))
     salida = widgets.HTML()
 
     def pintar(cambio):
@@ -172,12 +167,31 @@ def _contador(desde=0, hasta=255, ms=200):
 
     deslizador.observe(pintar, names="value")
     pintar({"new": desde})
-    return reproductor, deslizador, salida
+
+    corrida = {"numero": 0}
+
+    def avanzar(mia):
+        # Cada apreton del boton, prendiendo o apagando, le pone numero nuevo a
+        # la corrida. Un hilo que viene de un apreton anterior lo nota al
+        # despertar y se retira, asi que nunca hay dos avanzando el deslizador.
+        while play.value and corrida["numero"] == mia:
+            deslizador.value = _siguiente(deslizador.value, desde, hasta)
+            time.sleep(ms / 1000)
+
+    def al_presionar(cambio):
+        corrida["numero"] = corrida["numero"] + 1
+        if cambio["new"]:
+            play.description, play.icon = "pausa", "pause"
+            threading.Thread(target=avanzar, args=(corrida["numero"],),
+                             name=HILO_DEL_CONTADOR, daemon=True).start()
+        else:
+            play.description, play.icon = "play", "play"
+
+    play.observe(al_presionar, names="value")
+    return play, deslizador, salida
 
 
 def contador(desde=0, hasta=255, ms=200):
-    """El boton de play contando en binario."""
-    reproductor, deslizador, salida = _contador(desde, hasta, ms)
-    dibujar(a_binario(desde), etiquetas=TABLA_DE_VALORES, mostrar_bool=False,
-            titulo=f"empieza en {desde}")
-    display(widgets.VBox([widgets.HBox([reproductor, deslizador]), salida]))
+    """Miralos contar solos, del 0 al 255."""
+    play, deslizador, salida = _contador(desde, hasta, ms)
+    display(widgets.VBox([widgets.HBox([play, deslizador]), salida]))

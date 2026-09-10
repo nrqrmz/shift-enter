@@ -1,3 +1,4 @@
+import matplotlib.pyplot as plt
 import numpy as np
 
 from shift_enter import imagen
@@ -41,3 +42,4 @@ def test_mas_brillo_no_baja_de_cero():
 def test_mostrar_pinta_la_imagen():
     eje = imagen.mostrar(imagen.desde_texto("#."), titulo="prueba")
     assert len(eje.images) == 1
+    plt.close("all")

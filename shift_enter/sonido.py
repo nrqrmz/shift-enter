@@ -62,10 +62,6 @@ def dibujar_onda(ondas, etiquetas=None, muestras=300, ax=None):
 
 def deslizador_de_tono():
     """Arrastra los hertz y escucha el cambio."""
-    # Un cuadro fijo antes del widget: el estado de los widgets no se guarda,
-    # asi que sin esto la celda se ve vacia para quien lee en GitHub.
-    dibujar_onda(onda(440), etiquetas=["440 Hz"])
-
     @interact(hz=widgets.IntSlider(min=110, max=1760, step=10, value=440,
                                    description="Hz"))
     def _(hz):

@@ -1,3 +1,4 @@
+import matplotlib.pyplot as plt
 import numpy as np
 
 from shift_enter import sonido
@@ -37,15 +38,12 @@ def test_dibujar_onda_pinta_una_linea_por_onda():
     eje = sonido.dibujar_onda([sonido.onda(440, 0.1), sonido.onda(880, 0.1)],
                               etiquetas=["la", "la agudo"])
     assert len(eje.lines) == 2
+    plt.close("all")
 
 
-def test_deslizador_de_tono_deja_un_cuadro_fijo_antes_del_widget(monkeypatch):
+def test_deslizador_de_tono_no_deja_cuadro_fijo_antes_del_widget(monkeypatch):
     llamadas = []
     monkeypatch.setattr(sonido, "dibujar_onda", lambda *a, **k: llamadas.append((a, k)))
     monkeypatch.setattr(sonido, "reproducir", lambda *a, **k: None)
     sonido.deslizador_de_tono()
-    primera_args, primera_kwargs = llamadas[0]
-    ondas = primera_args[0] if primera_args else primera_kwargs.get("ondas")
-    etiquetas = primera_args[1] if len(primera_args) > 1 else primera_kwargs.get("etiquetas")
-    assert list(ondas) == list(sonido.onda(440))
-    assert etiquetas == ["440 Hz"]
+    assert len(llamadas) == 0
