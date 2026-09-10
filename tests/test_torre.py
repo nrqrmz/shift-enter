@@ -36,11 +36,17 @@ def test_la_torre_manda_al_alumno_a_las_partes_por_su_nombre():
 
 
 def test_comparar_velocidad_devuelve_dos_tiempos():
-    tuyo, de_python = torre.comparar_velocidad(veces=5)
+    tuyo, de_python = torre._comparar_velocidad(veces=5)
     assert tuyo > 0
     assert de_python > 0
 
 
 def test_el_sumador_a_mano_es_mas_lento_que_el_de_python():
-    tuyo, de_python = torre.comparar_velocidad(veces=20)
+    tuyo, de_python = torre._comparar_velocidad(veces=20)
     assert tuyo > de_python
+
+
+def test_comparar_velocidad_no_devuelve_nada():
+    # Si devolviera los tiempos, la celda de la notebook los imprimiria como
+    # tupla cruda debajo de la comparacion que lee el alumno.
+    assert torre.comparar_velocidad(veces=5) is None

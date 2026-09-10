@@ -46,8 +46,8 @@ def dibujar(capas=None, ax=None):
     return ax
 
 
-def comparar_velocidad(a=13, b=29, veces=300):
-    """Cronometra el sumador de compuertas contra el + que trae Python."""
+def _comparar_velocidad(a=13, b=29, veces=300):
+    """Mide los dos sumadores y devuelve los segundos de cada uno. Version interna."""
     inicio = time.perf_counter()
     for _ in range(veces):
         sumar(a, b)
@@ -59,8 +59,13 @@ def comparar_velocidad(a=13, b=29, veces=300):
         a + b
     de_python = (time.perf_counter() - inicio) / muchas
 
+    return tuyo, de_python
+
+
+def comparar_velocidad(a=13, b=29, veces=300):
+    """Cronometra el sumador de compuertas contra el + que trae Python."""
+    tuyo, de_python = _comparar_velocidad(a, b, veces)
     print(f"   tu sumador:      {tuyo * 1e6:>10.1f} microsegundos")
     print(f"   el + de Python:  {de_python * 1e6:>10.4f} microsegundos")
     print()
     print(f"   El tuyo es unas {tuyo / de_python:,.0f} veces más lento.")
-    return tuyo, de_python
