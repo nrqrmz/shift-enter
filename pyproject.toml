@@ -9,6 +9,7 @@ description = "La plomeria de las notebooks de shift-enter"
 requires-python = ">=3.10"
 dependencies = [
     "numpy",
+    "pandas",
     "matplotlib",
     "plotly",
     "pillow",
