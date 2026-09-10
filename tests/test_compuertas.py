@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 
 from shift_enter import compuertas
-from shift_enter.binario import a_decimal
+from shift_enter.binario import a_binario, a_decimal
 from shift_enter.paleta import ENCENDIDO
 
 
@@ -90,6 +90,22 @@ def test_tabla_de_verdad_sin_resaltar_no_resalta_nada():
     resaltados = [p for p in eje.patches if getattr(p, "get_linewidth", None)
                   and p.get_linewidth() > 2]
     assert resaltados == []
+    plt.close("all")
+
+
+def test_el_renglon_vigente_lleva_una_banda_encendida_detras():
+    # No basta engrosar el contorno: la prosa de la parte 5 promete que la
+    # tabla se ilumina, y en la tabla de una entrada ese contorno es la unica
+    # senal que hay.
+    eje = compuertas._tabla_de_verdad("AND", compuertas.AND, resaltar=(True, True))
+    bandas = [p for p in eje.patches if isinstance(p, plt.Rectangle)]
+    assert len(bandas) == 1
+    plt.close("all")
+
+
+def test_sin_resaltar_no_hay_ninguna_banda():
+    eje = compuertas._tabla_de_verdad("AND", compuertas.AND)
+    assert [p for p in eje.patches if isinstance(p, plt.Rectangle)] == []
     plt.close("all")
 
 
@@ -240,9 +256,6 @@ def test_con_los_dos_prendidos_la_suma_marca_cero_y_el_llevo_marca_uno():
     assert _valor_bajo_la_etiqueta(eje, "suma") == "0"
     assert _valor_bajo_la_etiqueta(eje, "llevo") == "1"
     plt.close("all")
-
-
-from shift_enter.binario import a_binario
 
 
 def test_los_llevos_coinciden_con_el_resultado_de_sumar():

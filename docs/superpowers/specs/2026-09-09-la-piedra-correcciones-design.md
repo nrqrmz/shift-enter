@@ -274,8 +274,12 @@ booleano es la lección de esa celda, no un insumo para otra.
 ## Verificación
 
 1. `pytest`, con la suite actualizada y `test_compuertas.py` nuevo.
-2. Re-ejecutar la notebook con `nbclient`, como indica `CLAUDE.md`, y confirmar
-   con el revisor de errores que no hay ninguna celda con `output_type: error`.
+2. Re-ejecutar la notebook con `nbclient`, como indica `CLAUDE.md`, con la
+   variable de entorno `PLOTLY_RENDERER=colab` puesta antes de correr el
+   comando (plotly la lee antes de autodetectar el entorno, y sin ella un
+   kernel local incrusta la librería completa y el archivo pasa de dos y
+   medio a doce megabytes), y confirmar con el revisor de errores que no hay
+   ninguna celda con `output_type: error`.
 3. Confirmar a mano que en la notebook ya no aparece ningún `def` ni ningún
    `if` fuera de la celda de calificación, y que no queda ninguna de las
    palabras retiradas: basura, corrimiento, inútil, aburrido, `§`.

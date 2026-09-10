@@ -12,7 +12,6 @@ from IPython.display import display
 from .binario import TABLA_DE_VALORES, a_binario, a_decimal
 from .paleta import APAGADO, BORDE, ENCENDIDO, TENUE
 
-PRENDIDO = True
 APAGADO_LOGICO = False
 
 
@@ -99,6 +98,10 @@ def _tabla_de_verdad(nombre, compuerta, entradas=2, resaltar=None, ax=None):
     for fila, caso in enumerate(casos):
         y = -fila
         vigente = resaltar is not None and tuple(bool(v) for v in resaltar) == caso
+        if vigente:
+            ax.add_patch(plt.Rectangle((-0.45, y - 0.42), salida_x + 0.9, 0.84,
+                                       facecolor="#fdf3cf", edgecolor=ENCENDIDO,
+                                       linewidth=1.4, zorder=0))
         grosor = 3.2 if vigente else 1.4
         for j, v in enumerate(caso):
             ax.add_patch(plt.Circle((j * 0.85, y), 0.28, zorder=2, linewidth=grosor,

@@ -32,7 +32,6 @@ def _imprimible(texto):
 def _deslizador_de_salto():
     """El deslizador del salto, ancho y rotulado en espanol de Mexico."""
     return widgets.IntSlider(min=0, max=25, value=0, description="salto",
-                             continuous_update=False,
                              layout=widgets.Layout(width="620px"))
 
 

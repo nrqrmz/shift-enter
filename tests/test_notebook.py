@@ -78,3 +78,11 @@ def test_la_notebook_no_usa_vocabulario_retirado():
     crudo = NOTEBOOK.read_text(encoding="utf-8")
     ofensivas = [palabra for palabra in PROHIBIDAS if palabra in crudo]
     assert ofensivas == []
+
+
+def test_el_paquete_no_usa_vocabulario_retirado():
+    paquete = Path(__file__).resolve().parents[1] / "shift_enter"
+    fuente = "\n".join(archivo.read_text(encoding="utf-8")
+                       for archivo in sorted(paquete.rglob("*.py")))
+    ofensivas = [palabra for palabra in PROHIBIDAS if palabra in fuente]
+    assert ofensivas == []

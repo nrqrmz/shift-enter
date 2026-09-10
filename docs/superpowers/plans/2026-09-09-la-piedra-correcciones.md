@@ -1089,7 +1089,7 @@ print("listo: /tmp/sumador_*.png")
 PY
 ```
 
-Confirma que en 255 más 1 las ocho flechas de llevo están encendidas y la fila
+Confirma que en 255 más 1 las siete flechas de llevo están encendidas y la fila
 de la suma está toda apagada, y que en 13 más 29 el resultado dice 42.
 
 - [ ] **Step 6: Correr la suite completa**

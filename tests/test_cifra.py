@@ -1,5 +1,3 @@
-from pathlib import Path
-
 import matplotlib.pyplot as plt
 
 from shift_enter import cifra
@@ -65,6 +63,9 @@ def test_el_deslizador_se_llama_salto_y_es_ancho():
     assert deslizador.description == "salto"
     assert deslizador.min == 0 and deslizador.max == 25
     assert deslizador.layout.width == "620px"
+    # La celda del reto dice "arrastra el salto": si no actualiza al arrastrar,
+    # el alumno tiene que soltar el mouse veintiseis veces.
+    assert deslizador.continuous_update is True
 
 
 def test_deslizador_disco_no_deja_cuadro_fijo_antes_del_widget(monkeypatch):
@@ -74,9 +75,3 @@ def test_deslizador_disco_no_deja_cuadro_fijo_antes_del_widget(monkeypatch):
     # Una sola llamada: el render inicial de @interact. Colab es el unico
     # blanco, asi que ya no se dibuja un cuadro fijo para quien lee sin correr.
     assert len(llamadas) == 1
-
-
-def test_en_la_fuente_no_queda_vocabulario_de_espana():
-    fuente = Path(cifra.__file__).read_text(encoding="utf-8")
-    for prohibida in ("corrimiento", "desplazamiento"):
-        assert prohibida not in fuente
