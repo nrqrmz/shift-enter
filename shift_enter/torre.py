@@ -1,14 +1,18 @@
 """La torre de capas, de la arena hasta esta celda."""
 
+import time
+
 import matplotlib.pyplot as plt
+
+from .compuertas import sumar
 
 LAS_CAPAS = [
     ("Arena y electricidad", "física. Aquí no hay ideas todavía"),
     ("Transistor", "un interruptor sin partes móviles"),
-    ("Compuerta", "NO, Y, O            ← lo construiste en §5"),
-    ("Bit", "prendido o apagado  ← §4"),
-    ("Byte", "ocho bits: un número, una letra, un pixel  ← §1, §2 y §4"),
-    ("Sumador", "13 + 29 = 42        ← §5"),
+    ("Compuerta", "NOT, AND, OR        ← lo armaste en la parte 5"),
+    ("Bit", "prendido o apagado  ← parte 4"),
+    ("Byte", "ocho bits: un número, una letra, un pixel  ← partes 1, 2 y 4"),
+    ("Sumador", "13 + 29 = 42        ← parte 5"),
     ("Instrucción", "lo único que el procesador entiende"),
     ("Python", "el + que usaste sin pensarlo"),
     ("Esta celda", "aquí estás tú"),
@@ -40,3 +44,23 @@ def dibujar(capas=None, ax=None):
         plt.tight_layout()
         plt.show()
     return ax
+
+
+def comparar_velocidad(a=13, b=29, veces=300):
+    """Cronometra el sumador de compuertas contra el + que trae Python."""
+    inicio = time.perf_counter()
+    for _ in range(veces):
+        sumar(a, b)
+    tuyo = (time.perf_counter() - inicio) / veces
+
+    muchas = veces * 1000
+    inicio = time.perf_counter()
+    for _ in range(muchas):
+        a + b
+    de_python = (time.perf_counter() - inicio) / muchas
+
+    print(f"   tu sumador:      {tuyo * 1e6:>10.1f} microsegundos")
+    print(f"   el + de Python:  {de_python * 1e6:>10.4f} microsegundos")
+    print()
+    print(f"   El tuyo es unas {tuyo / de_python:,.0f} veces más lento.")
+    return tuyo, de_python
