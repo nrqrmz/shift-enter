@@ -86,3 +86,16 @@ def test_el_paquete_no_usa_vocabulario_retirado():
                        for archivo in sorted(paquete.rglob("*.py")))
     ofensivas = [palabra for palabra in PROHIBIDAS if palabra in fuente]
     assert ofensivas == []
+
+
+def test_ninguna_salida_carga_plotly_entero(celdas):
+    # Cada figura de plotly quiere guardar una copia completa de plotly.js
+    # dentro del archivo: casi cinco megas por celda que en GitHub no dibujan
+    # nada, porque alla el JavaScript se elimina. La figura viaja en el
+    # payload "application/vnd.plotly.v1+json", que si se renderiza en Colab,
+    # Jupyter y nbviewer. Despues de re-ejecutar hay que volver a quitarlas.
+    ofensivas = [i for i, celda in enumerate(celdas)
+                 for salida in celda.get("outputs", [])
+                 if "plotly" in "".join(salida.get("data", {})
+                                        .get("text/html", "")).lower()]
+    assert ofensivas == []

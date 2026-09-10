@@ -1,10 +1,12 @@
 """Sonido: una lista de numeros que se puede escuchar."""
 
 import ipywidgets as widgets
-import matplotlib.pyplot as plt
 import numpy as np
+import plotly.express as px
 from IPython.display import Audio, display
 from ipywidgets import interact
+
+from shift_enter import paleta
 
 MUESTREO = 22050
 
@@ -40,24 +42,40 @@ def melodia_del_nombre(texto, segundos_por_letra=0.35):
     return np.concatenate(notas)
 
 
-def dibujar_onda(ondas, etiquetas=None, muestras=300, ax=None):
-    """Un sonido, visto de muy cerca."""
+def _dibujar_onda(ondas, etiquetas=None, muestras=300):
+    """Construye la figura de un sonido visto de cerca. Version interna."""
     if not isinstance(ondas, (list, tuple)):
         ondas = [ondas]
-    propia = ax is None
-    if propia:
-        _, ax = plt.subplots(figsize=(11, 2.5))
-    for i, arreglo in enumerate(ondas):
-        etiqueta = None if etiquetas is None else etiquetas[i]
-        ax.plot(np.arange(min(muestras, len(arreglo))) / MUESTREO,
-                arreglo[:muestras], linewidth=1.5, label=etiqueta)
-    if etiquetas is not None:
-        ax.legend(loc="upper right", fontsize=9)
-    ax.set_xlabel("segundos")
-    if propia:
-        plt.tight_layout()
-        plt.show()
-    return ax
+    con_leyenda = etiquetas is not None
+    if not con_leyenda:
+        etiquetas = [f"onda {i + 1}" for i in range(len(ondas))]
+
+    datos = {"segundos": [], "amplitud": [], "onda": []}
+    for etiqueta, arreglo in zip(etiquetas, ondas):
+        recorte = np.asarray(arreglo)[:muestras]
+        datos["segundos"].extend(np.arange(len(recorte)) / MUESTREO)
+        datos["amplitud"].extend(recorte)
+        datos["onda"].extend([etiqueta] * len(recorte))
+
+    # La ultima onda es el resultado, y se lleva el color de lo encendido.
+    colores = {etiqueta: paleta.COLORES_ONDA[i % len(paleta.COLORES_ONDA)]
+               for i, etiqueta in enumerate(etiquetas)}
+    colores[etiquetas[-1]] = paleta.ENCENDIDO
+
+    figura = px.line(datos, x="segundos", y="amplitud", color="onda",
+                     color_discrete_map=colores,
+                     category_orders={"onda": list(etiquetas)})
+    figura.update_traces(line_width=1.6, hovertemplate="%{y:.2f}")
+    figura.update_traces(selector={"name": etiquetas[-1]}, line_width=3)
+    figura.update_layout(hovermode="x unified", showlegend=con_leyenda,
+                         legend_title_text="", yaxis_title=None,
+                         margin=dict(l=10, r=10, t=30, b=10), height=340)
+    return figura
+
+
+def dibujar_onda(ondas, etiquetas=None, muestras=300):
+    """Un sonido, visto de muy cerca. En la leyenda se prende y se apaga."""
+    _dibujar_onda(ondas, etiquetas, muestras).show()
 
 
 def deslizador_de_tono():
